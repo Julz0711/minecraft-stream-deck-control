@@ -7,7 +7,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { GLYPHS, type GlyphName, glyphSvg } from "../src/glyphs";
-import { renderKey } from "../src/keys";
+import { pixelArt, renderKey } from "../src/keys";
+import { PIXEL_ICONS } from "../src/pixels";
 
 const root = path.resolve(import.meta.dirname, "../com.julz.minecraft-control.sdPlugin");
 const check = process.argv.includes("--check");
@@ -38,7 +39,7 @@ for (const action of manifest.Actions) {
 		throw new Error(`No glyph called ${name}`);
 	}
 	write(`imgs/actions/${name}.svg`, glyphSvg(name, 20) + "\n");
-	write(`imgs/actions/${name}-key.svg`, renderKey({ glyph: name, disabled: true }) + "\n");
+	write(`imgs/actions/${name}-key.svg`, renderKey({ glyph: name }) + "\n");
 }
 
 write("imgs/plugin/category-icon.svg", glyphSvg("block", 28) + "\n");
@@ -46,9 +47,8 @@ write("imgs/plugin/category-icon.svg", glyphSvg("block", 28) + "\n");
 // The Marketplace icon has to be a PNG
 const logo =
 	`<svg xmlns="http://www.w3.org/2000/svg" width="288" height="288" viewBox="0 0 288 288">` +
-	`<rect width="288" height="288" rx="64" fill="#3c8527"/>` +
-	`<svg x="54" y="54" width="180" height="180" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" ` +
-	`stroke-linecap="round" stroke-linejoin="round">${GLYPHS.block}</svg></svg>`;
+	`<rect width="288" height="288" rx="64" fill="#1f2a3a"/>` +
+	`<svg x="48" y="48" width="192" height="192" viewBox="0 0 16 16" shape-rendering="crispEdges">${pixelArt(PIXEL_ICONS.block!)}</svg></svg>`;
 for (const [file, size] of [
 	["imgs/plugin/marketplace.png", 256],
 	["imgs/plugin/marketplace@2x.png", 512]

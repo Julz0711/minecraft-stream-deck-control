@@ -77,6 +77,6 @@ cd plugin && npm run pack              # dist/com.julz.minecraft-control.streamD
 cd plugin && npm run watch             # rebuilds and restarts the plugin in the Stream Deck app while developing
 ```
 
-`npm run icons` regenerates the plugin's images from the glyphs in `plugin/src/glyphs.ts`.
+Key icons are original 16 × 16 pixel art in `plugin/src/pixels.ts` (no game textures); the action list uses the line icons in `plugin/src/glyphs.ts`, as Elgato asks for monochrome action icons. `npm run icons` regenerates the static images from both.
 
 GitHub Actions builds both parts on every pull request and uploads the mod jar and the `.streamDeckPlugin` as artifacts.
