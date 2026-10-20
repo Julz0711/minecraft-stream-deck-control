@@ -43,7 +43,7 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
         try (Deck deck = Deck.connect(port)) {
             deck.send("{\"type\":\"hello\",\"protocol\":1,\"token\":\"" + code + "\",\"client\":\"Test\"}");
             context.waitFor(client -> deck.welcome != null);
-            assertEquals(17, deck.welcome.getAsJsonArray("actions").size(), "number of actions");
+            assertEquals(18, deck.welcome.getAsJsonArray("actions").size(), "number of actions");
             assertEquals(false, deck.state("inWorld").getAsBoolean(), "inWorld on the title screen");
 
             // Cheats on, so the admin keys can be tested too
