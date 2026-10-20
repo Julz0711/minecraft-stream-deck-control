@@ -77,7 +77,7 @@ Otherwise it sends an `error` and closes the connection:
 | `weather` | `weather`: `clear`, `rain`, `thunder` | Admin. |
 | `time` | `time`: `day`, `noon`, `night`, `midnight` | Admin. |
 | `daylight_cycle` | `on` (optional) | Admin. Sets the `advance_time` game rule. |
-| `debug_key` | `key`: `chunk_borders`, `hitboxes`, `advanced_tooltips`, `reload_chunks`, `reload_resources`, `copy_location`, `pause_on_lost_focus` | The F3 shortcuts (G, B, H, A, T, C, P). Chunk borders, hitboxes and copy location fail with `disabled` when the server hides debug info. |
+| `debug_key` | `key`: `chunk_borders`, `hitboxes`, `advanced_tooltips`, `reload_chunks`, `reload_resources`, `copy_location`, `clear_chat`, `pause_without_menu`, `creative_spectator`, `pause_on_lost_focus` | The F3 shortcuts (G, B, H, A, T, C, D, Esc, N, P). `creative_spectator` needs `canCheat`; `pause_without_menu` is singleplayer only. Chunk borders, hitboxes and copy location fail with `disabled` when the server hides debug info. |
 | `game_mode` | `mode` (optional): `survival`, `creative`, `adventure`, `spectator` | Admin. Without `mode`, cycles survival, creative, spectator. |
 
 Toggle actions flip the current value, or set it when `on` is given. Admin actions need operator rights on a server, or

@@ -18,6 +18,7 @@ import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.GameType;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.GameType;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
@@ -287,6 +289,23 @@ public class GameActions implements ActionHandler {
             case "reload_chunks" -> ((MinecraftAccessor) client).streamDeckControl$levelExtractor().allChanged();
             case "reload_resources" -> client.reloadResourcePacks();
             case "copy_location" -> client.keyboardHandler.setClipboard(locationCommand(player));
+            case "clear_chat" -> client.gui.hud.getChat().clearMessages(false);
+            case "pause_without_menu" -> {
+                if (!client.hasSingleplayerServer()) {
+                    return ActionResult.fail(Protocol.SINGLEPLAYER_ONLY, "Only singleplayer can pause the game");
+                }
+                client.pauseGame(true);
+            }
+            case "creative_spectator" -> {
+                // Same as F3+N: spectator, or back to the previous mode
+                if (!canCheat(client)) {
+                    return ActionResult.fail(Protocol.NO_PERMISSION, "Needs operator rights or cheats");
+                }
+                GameType target = player.isSpectator()
+                        ? Objects.requireNonNullElse(client.gameMode.getPreviousPlayerMode(), GameType.CREATIVE)
+                        : GameType.SPECTATOR;
+                player.connection.send(new ServerboundChangeGameModePacket(target));
+            }
             default -> {
                 return ActionResult.fail(Protocol.BAD_REQUEST, "Unknown debug key: " + key);
             }

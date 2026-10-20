@@ -124,16 +124,16 @@
 			"PropertyInspectorPath": "ui/none.html"
 		},
 		{
-			"Name": "Debug shortcut",
+			"Name": "F3 shortcut",
 			"UUID": "com.julz.minecraft-control.debug-shortcut",
-			"Icon": "imgs/actions/chunkBorders",
-			"Tooltip": "F3 shortcuts: chunk borders, hitboxes, advanced tooltips, reload chunks or resources, copy location.",
+			"Icon": "imgs/actions/hitboxes",
+			"Tooltip": "Any F3 combo on one key: hitboxes (B), chunk borders (G), advanced tooltips (H), creative/spectator (N), reload (T, A), copy location (C) and more.",
 			"Controllers": [
 				"Keypad"
 			],
 			"States": [
 				{
-					"Image": "imgs/actions/chunkBorders-key",
+					"Image": "imgs/actions/hitboxes-key",
 					"ShowTitle": false,
 					"TitleAlignment": "top"
 				}

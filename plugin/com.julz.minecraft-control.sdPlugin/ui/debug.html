@@ -7,18 +7,21 @@
 	</head>
 	<body>
 		<div class="item">
-			<label for="key">Shortcut</label>
-			<select id="key" data-setting="key" data-default="chunk_borders">
-				<option value="chunk_borders">Chunk borders (F3+G)</option>
-				<option value="hitboxes">Hitboxes (F3+B)</option>
-				<option value="advanced_tooltips">Advanced tooltips (F3+H)</option>
-				<option value="reload_chunks">Reload chunks (F3+A)</option>
-				<option value="reload_resources">Reload resource packs (F3+T)</option>
-				<option value="copy_location">Copy location (F3+C)</option>
-				<option value="pause_on_lost_focus">Pause when tabbed out (F3+P)</option>
+			<label for="key">Combo</label>
+			<select id="key" data-setting="key" data-default="hitboxes">
+				<option value="hitboxes">F3+B · Show hitboxes</option>
+				<option value="chunk_borders">F3+G · Show chunk borders</option>
+				<option value="advanced_tooltips">F3+H · Advanced tooltips (durability, item IDs)</option>
+				<option value="creative_spectator">F3+N · Creative ↔ spectator</option>
+				<option value="reload_resources">F3+T · Reload resource packs</option>
+				<option value="reload_chunks">F3+A · Reload chunks</option>
+				<option value="copy_location">F3+C · Copy location</option>
+				<option value="clear_chat">F3+D · Clear chat</option>
+				<option value="pause_without_menu">F3+Esc · Pause without menu</option>
+				<option value="pause_on_lost_focus">F3+P · Pause when tabbed out</option>
 			</select>
 		</div>
-		<p class="hint">Some servers hide debug info; then chunk borders, hitboxes and copy location are locked, like in vanilla.</p>
+		<p class="hint">Some servers hide debug info; then hitboxes, chunk borders and copy location are locked, like in vanilla. F3+N needs operator rights or cheats.</p>
 		<script src="pi.js"></script>
 	</body>
 </html>

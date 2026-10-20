@@ -473,46 +473,69 @@ export class ServerKey extends GameKey<ServerSettings> {
 }
 
 type DebugShortcut =
-	| "chunk_borders"
 	| "hitboxes"
+	| "chunk_borders"
 	| "advanced_tooltips"
-	| "reload_chunks"
+	| "creative_spectator"
 	| "reload_resources"
+	| "reload_chunks"
 	| "copy_location"
+	| "clear_chat"
+	| "pause_without_menu"
 	| "pause_on_lost_focus";
 
 type DebugShortcutSettings = { key?: DebugShortcut };
 
-const DEBUG_SHORTCUTS: Record<DebugShortcut, { glyph: GlyphName; label: string; isOn?: (state: GameState) => boolean | null | undefined; needsWorld: boolean; hiddenByServer?: boolean }> = {
-	chunk_borders: { glyph: "chunkBorders", label: "Chunks", isOn: (s) => s.chunkBorders, needsWorld: true, hiddenByServer: true },
-	hitboxes: { glyph: "hitboxes", label: "Hitboxes", isOn: (s) => s.hitboxes, needsWorld: true, hiddenByServer: true },
-	advanced_tooltips: { glyph: "tooltip", label: "Tooltips", isOn: (s) => s.advancedTooltips, needsWorld: false },
-	pause_on_lost_focus: { glyph: "focus", label: "Pause", isOn: (s) => s.pauseOnLostFocus, needsWorld: false },
-	reload_chunks: { glyph: "reload", label: "Chunks", needsWorld: true },
-	reload_resources: { glyph: "resources", label: "Resources", needsWorld: false },
-	copy_location: { glyph: "copy", label: "Location", needsWorld: true, hiddenByServer: true }
+type ShortcutInfo = {
+	/** The vanilla key combination, shown at the top of the key. */
+	combo: string;
+	glyph: GlyphName;
+	/** Word under the icon for one-shot shortcuts. */
+	verb?: string;
+	isOn?: (state: GameState) => boolean | null | undefined;
+	needsWorld: boolean;
+	hiddenByServer?: boolean;
+	admin?: boolean;
 };
 
-/** F3 + key shortcuts: chunk borders (G), hitboxes (B), advanced tooltips (H), reload chunks (A) and more. */
+/** The F3 combinations, most used first (hitboxes, chunk borders and tooltips top most "best shortcuts" lists). */
+const DEBUG_SHORTCUTS: Record<DebugShortcut, ShortcutInfo> = {
+	hitboxes: { combo: "F3+B", glyph: "hitboxes", isOn: (s) => s.hitboxes, needsWorld: true, hiddenByServer: true },
+	chunk_borders: { combo: "F3+G", glyph: "chunkBorders", isOn: (s) => s.chunkBorders, needsWorld: true, hiddenByServer: true },
+	advanced_tooltips: { combo: "F3+H", glyph: "tooltip", isOn: (s) => s.advancedTooltips, needsWorld: false },
+	creative_spectator: { combo: "F3+N", glyph: "spectator", isOn: (s) => (s.gameMode ? s.gameMode === "spectator" : undefined), needsWorld: true, admin: true },
+	reload_resources: { combo: "F3+T", glyph: "resources", verb: "RELOAD", needsWorld: false },
+	reload_chunks: { combo: "F3+A", glyph: "reload", verb: "RELOAD", needsWorld: true },
+	copy_location: { combo: "F3+C", glyph: "copy", verb: "COPY", needsWorld: true, hiddenByServer: true },
+	clear_chat: { combo: "F3+D", glyph: "chat", verb: "CLEAR", needsWorld: true },
+	pause_without_menu: { combo: "F3+Esc", glyph: "pause", verb: "PAUSE", needsWorld: true },
+	pause_on_lost_focus: { combo: "F3+P", glyph: "focus", isOn: (s) => s.pauseOnLostFocus, needsWorld: false }
+};
+
+/** One key for any F3 combination; the key's settings pick which. */
 @action({ UUID: `${UUID}.debug-shortcut` })
 export class DebugShortcutKey extends GameKey<DebugShortcutSettings> {
 	protected face({ settings, game }: KeyContext<DebugShortcutSettings>): KeyFace {
-		const shortcut = DEBUG_SHORTCUTS[settings.key ?? "chunk_borders"] ?? DEBUG_SHORTCUTS.chunk_borders;
+		const shortcut = DEBUG_SHORTCUTS[settings.key ?? "hitboxes"] ?? DEBUG_SHORTCUTS.hitboxes;
+		const label = shortcut.combo;
 		if (shortcut.needsWorld && !inWorld(game)) {
-			return { glyph: shortcut.glyph, label: shortcut.label, disabled: true };
+			return { glyph: shortcut.glyph, label, disabled: true };
 		}
 		if (shortcut.hiddenByServer && game.state.reducedDebugInfo === true) {
-			return { glyph: "lock", label: shortcut.label, value: "HIDDEN", disabled: true };
+			return { glyph: "lock", label, value: "HIDDEN", disabled: true };
+		}
+		if (shortcut.admin && !canCheat(game)) {
+			return { glyph: "lock", label, value: "OP ONLY", disabled: true };
 		}
 		if (!shortcut.isOn) {
-			return { glyph: shortcut.glyph, label: shortcut.label, value: settings.key === "copy_location" ? "COPY" : "RELOAD" };
+			return { glyph: shortcut.glyph, label, value: shortcut.verb };
 		}
 		const on = shortcut.isOn(game.state);
-		return { glyph: shortcut.glyph, label: shortcut.label, value: on === undefined || on === null ? "" : onOff(on), color: on ? COLORS.on : undefined };
+		return { glyph: shortcut.glyph, label, value: on === undefined || on === null ? "" : onOff(on), color: on ? COLORS.on : undefined };
 	}
 
 	protected async press({ settings, game }: KeyContext<DebugShortcutSettings>, action: KeyAction<DebugShortcutSettings>) {
-		const key = settings.key ?? "chunk_borders";
+		const key = settings.key ?? "hitboxes";
 		const result = await game.request("debug_key", { key });
 		if (result.ok && !DEBUG_SHORTCUTS[key]?.isOn) {
 			await action.showOk();

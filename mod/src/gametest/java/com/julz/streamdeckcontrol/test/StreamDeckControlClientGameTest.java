@@ -165,6 +165,12 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
         expectOk(context, deck, "debug_key", "{\"key\":\"copy_location\"}");
         String location = context.computeOnClient(client -> com.julz.streamdeckcontrol.client.GameActions.locationCommand(client.player));
         assertEquals(true, location.startsWith("/execute in minecraft:overworld run tp @s "), "copied location: " + location);
+        expectOk(context, deck, "debug_key", "{\"key\":\"clear_chat\"}");
+        String modeBefore = deck.state("gameMode").getAsString();
+        expectOk(context, deck, "debug_key", "{\"key\":\"creative_spectator\"}");
+        context.waitFor(client -> deck.state("gameMode").getAsString().equals("spectator"));
+        expectOk(context, deck, "debug_key", "{\"key\":\"creative_spectator\"}");
+        context.waitFor(client -> deck.state("gameMode").getAsString().equals(modeBefore.equals("spectator") ? "creative" : modeBefore));
         JsonObject unknownKey = deck.request(context, "debug_key", "{\"key\":\"nope\"}");
         assertEquals("bad_request", unknownKey.get("error").getAsString(), "unknown debug key");
         context.waitFor(client -> deck.state("fps").getAsInt() > 0);

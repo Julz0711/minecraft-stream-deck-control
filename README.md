@@ -34,7 +34,7 @@ This repository has two parts:
 | Status | FPS, coordinates or in-game time | Read-only |
 | Compass | Facing direction and biome | Read-only, the needle keeps pointing north |
 | Server | Ping, players online or server name | Read-only |
-| Debug shortcut | On or off | F3+G chunk borders, F3+B hitboxes, F3+H advanced tooltips, F3+A reload chunks, F3+T reload resource packs, F3+C copy location, F3+P pause when tabbed out |
+| F3 shortcut | On or off | One key, any combo: F3+B hitboxes, F3+G chunk borders, F3+H advanced tooltips, F3+N creative/spectator, F3+T reload resource packs, F3+A reload chunks, F3+C copy location, F3+D clear chat, F3+Esc pause without menu, F3+P pause when tabbed out |
 
 Admin keys need operator rights on a server, or cheats in singleplayer. Without them they show a lock and do nothing,
 instead of sending commands the server would reject.
