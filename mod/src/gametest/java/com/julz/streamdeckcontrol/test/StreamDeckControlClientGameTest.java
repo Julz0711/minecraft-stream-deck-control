@@ -46,7 +46,10 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
             assertEquals(17, deck.welcome.getAsJsonArray("actions").size(), "number of actions");
             assertEquals(false, deck.state("inWorld").getAsBoolean(), "inWorld on the title screen");
 
-            try (TestSingleplayerContext singleplayer = context.worldBuilder().create()) {
+            // Cheats on, so the admin keys can be tested too
+            try (TestSingleplayerContext singleplayer = context.worldBuilder()
+                    .adjustSettings(creator -> creator.setAllowCommands(true))
+                    .create()) {
                 context.waitFor(client -> client.player != null);
                 context.waitFor(client -> deck.has("inWorld") && deck.state("inWorld").getAsBoolean());
                 testOptions(context, deck);
@@ -144,11 +147,7 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
         boolean actualPermission = context.computeOnClient(client ->
                 client.player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER));
         assertEquals(actualPermission, canCheat, "canCheat matches the player's permissions");
-        if (!canCheat) {
-            JsonObject denied = deck.request(context, "weather", "{\"weather\":\"rain\"}");
-            assertEquals("no_permission", denied.get("error").getAsString(), "weather without cheats");
-            return;
-        }
+        assertEquals(true, canCheat, "canCheat in a world with cheats on");
         String mode = deck.state("gameMode").getAsString();
         expectOk(context, deck, "game_mode", "{\"mode\":\"spectator\"}");
         context.waitFor(client -> deck.state("gameMode").getAsString().equals("spectator"));
