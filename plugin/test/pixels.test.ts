@@ -21,3 +21,13 @@ describe("pixel icons", () => {
 		expect(svg).not.toContain("#e02020");
 	});
 });
+
+describe("key images", () => {
+	it("avoid SVG features the Stream Deck app can't draw", () => {
+		for (const face of [{ glyph: "compass", label: "Plains", value: "N", rotate: 30 }, { glyph: "volume", value: "40%" }, { glyph: "plus" }] as const) {
+			const svg = renderKey(face);
+			expect(svg.match(/<svg/g)).toHaveLength(1);
+			expect(svg).not.toContain("currentColor");
+		}
+	});
+});

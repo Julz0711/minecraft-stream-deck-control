@@ -84,6 +84,11 @@ function compassNeedle(degrees: number, disabled: boolean): string {
 	);
 }
 
+/** A line glyph with `currentColor` spelled out, which not every SVG renderer understands. */
+function lineGlyph(name: GlyphName, color: string): string {
+	return GLYPHS[name].replaceAll("currentColor", color);
+}
+
 /** Renders a key face as an SVG string, 144 × 144 (the @2x key size). */
 export function renderKey(face: KeyFace): string {
 	const color = face.disabled ? COLORS.muted : (face.color ?? COLORS.text);
@@ -94,15 +99,16 @@ export function renderKey(face: KeyFace): string {
 	const glyphX = (SIZE - glyphSize) / 2;
 	const glyphY = (SIZE - glyphSize) / 2 - (hasValue ? 6 : 0);
 	const pixels = PIXEL_ICONS[face.glyph];
+	// Plain groups instead of nested <svg> elements: the Stream Deck app's SVG renderer skips nested ones.
 	const icon = pixels
-		? `<svg x="${glyphX}" y="${glyphY}" width="${glyphSize}" height="${glyphSize}" viewBox="0 0 16 16" shape-rendering="crispEdges">` +
+		? `<g transform="translate(${glyphX} ${glyphY}) scale(${glyphSize / 16})">` +
 			pixelArt(pixels, face.disabled === true) +
 			(face.glyph === "compass" ? compassNeedle(face.rotate ?? 0, face.disabled === true) : "") +
-			`</svg>`
-		: `<svg x="${glyphX}" y="${glyphY}" width="${glyphSize}" height="${glyphSize}" viewBox="0 0 48 48" fill="none" ` +
-			`stroke="${color}" color="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">` +
-			(face.rotate ? `<g transform="rotate(${Math.round(face.rotate)} 24 24)">${GLYPHS[face.glyph]}</g>` : GLYPHS[face.glyph]) +
-			`</svg>`;
+			`</g>`
+		: `<g transform="translate(${glyphX} ${glyphY}) scale(${glyphSize / 48})" fill="none" ` +
+			`stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">` +
+			(face.rotate ? `<g transform="rotate(${Math.round(face.rotate)} 24 24)">${lineGlyph(face.glyph, color)}</g>` : lineGlyph(face.glyph, color)) +
+			`</g>`;
 	const parts: string[] = [
 		`<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">`,
 		`<rect width="${SIZE}" height="${SIZE}" fill="${face.background ?? COLORS.background}"/>`,
@@ -132,6 +138,7 @@ export function renderKey(face: KeyFace): string {
 	return parts.join("");
 }
 
+/** The form the Stream Deck SDK documents for SVG images: plain, URI-encoded markup rather than base64. */
 export function toDataUrl(svg: string): string {
-	return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+	return `data:image/svg+xml;charset=utf8,${encodeURIComponent(svg)}`;
 }

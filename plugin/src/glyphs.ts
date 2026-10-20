@@ -78,6 +78,6 @@ export type GlyphName = keyof typeof GLYPHS;
 export function glyphSvg(name: GlyphName, size: number, color = "#ffffff"): string {
 	return (
 		`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 48 48" fill="none" ` +
-		`stroke="${color}" color="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${GLYPHS[name]}</svg>`
+		`stroke="${color}" color="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${GLYPHS[name].replaceAll("currentColor", color)}</svg>`
 	);
 }
