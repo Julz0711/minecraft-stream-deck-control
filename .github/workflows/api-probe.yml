@@ -57,12 +57,11 @@ jobs:
             net.minecraft.server.permissions.Permissions \
             net.minecraft.server.permissions.PermissionSet \
             net.minecraft.world.clock.WorldClock \
+            net.minecraft.client.OptionInstance \
+            net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl \
             ; do
             echo "=================== $c"
-            javap -cp "$CP" -p "$c" 2>&1 | grep -v '^  private static final .*\$' | head -400
+            javap -cp "$CP" -p "$c" 2>&1 | grep -vE 'lambda\$|access\$|^  private static final (org.slf4j|int|long|float|double|java.lang.String|net.minecraft.resources.Identifier) ' | sed -E 's/net\.minecraft\.//g; s/java\.lang\.//g; s/java\.util\.//g' | head -300
           done
           echo "=================== list clock/time/permission classes"
-          for j in $JAR; do unzip -l "$j" | grep -iE "clock|permission|GameRule|debug/DebugScreen" | awk '{print $4}' | head -80; done
-          echo "=================== fabric hud"
-          for j in $(find ~/.gradle/caches -name "fabric-rendering-v1*.jar" | grep -v sources | head -1); do unzip -l $j | grep -i hud; done
-          javap -cp "$CP:$FAPI" -p net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry 2>&1 | head -80
+          for j in $(echo "$JAR" | head -1); do unzip -l "$j" | awk '{print $4}' | grep -E '\.class$' | grep -iE "clock|permission|gamerule|debug/DebugScreen|toast" | grep -v '\$' | head -80; done
