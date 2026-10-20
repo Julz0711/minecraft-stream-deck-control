@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.julz.streamdeckcontrol.config.ModConfig;
 import com.julz.streamdeckcontrol.core.ActionHandler;
 import com.julz.streamdeckcontrol.core.ActionResult;
+import com.julz.streamdeckcontrol.core.ChatMessage;
 import com.julz.streamdeckcontrol.core.Protocol;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.GameType;
@@ -48,6 +50,7 @@ public class GameActions implements ActionHandler {
         actions.put("fullscreen", GameActions::fullscreen);
         actions.put("open_screen", GameActions::openScreen);
         actions.put("command", GameActions::command);
+        actions.put("chat", GameActions::chat);
         actions.put("weather", GameActions::weather);
         actions.put("time", GameActions::time);
         actions.put("daylight_cycle", GameActions::daylightCycle);
@@ -106,29 +109,51 @@ public class GameActions implements ActionHandler {
     }
 
     private static ActionResult volume(Minecraft client, JsonObject args) {
-        OptionInstance<Double> master = client.options.getSoundSourceOptionInstance(SoundSource.MASTER);
+        SoundSource source = soundSource(args);
+        if (source == null) {
+            return ActionResult.fail(Protocol.BAD_REQUEST, "Unknown sound category: " + string(args, "source"));
+        }
+        OptionInstance<Double> option = client.options.getSoundSourceOptionInstance(source);
         double target = args.has("value")
                 ? integer(args, "value", 100) / 100.0
-                : percent(master.get()) / 100.0 + integer(args, "delta", 10) / 100.0;
-        master.set(Math.clamp(target, 0.0, 1.0));
+                : percent(option.get()) / 100.0 + integer(args, "delta", 10) / 100.0;
+        option.set(Math.clamp(target, 0.0, 1.0));
         client.options.save();
         return ActionResult.OK;
     }
 
     private static ActionResult mute(Minecraft client, JsonObject args) {
-        OptionInstance<Double> master = client.options.getSoundSourceOptionInstance(SoundSource.MASTER);
-        boolean muted = master.get() <= 0;
+        SoundSource source = soundSource(args);
+        if (source == null) {
+            return ActionResult.fail(Protocol.BAD_REQUEST, "Unknown sound category: " + string(args, "source"));
+        }
+        OptionInstance<Double> option = client.options.getSoundSourceOptionInstance(source);
+        boolean muted = option.get() <= 0;
         boolean mute = bool(args, "on", !muted);
         ModConfig config = ModConfig.getInstance();
         if (mute && !muted) {
-            config.volumeBeforeMute = master.get();
+            config.mutedVolumes.put(source.getName(), option.get());
             ModConfig.save();
-            master.set(0.0);
+            option.set(0.0);
         } else if (!mute && muted) {
-            master.set(Math.clamp(config.volumeBeforeMute, 0.05, 1.0));
+            option.set(Math.clamp(config.mutedVolumes.getOrDefault(source.getName(), 1.0), 0.05, 1.0));
         }
         client.options.save();
         return ActionResult.OK;
+    }
+
+    /** The "source" argument as a sound category, master when left out, or null when unknown. */
+    private static SoundSource soundSource(JsonObject args) {
+        String name = string(args, "source");
+        if (name == null) {
+            return SoundSource.MASTER;
+        }
+        for (SoundSource source : SoundSource.values()) {
+            if (source.getName().equals(name)) {
+                return source;
+            }
+        }
+        return null;
     }
 
     private static ActionResult fullscreen(Minecraft client, JsonObject args) {
@@ -233,6 +258,27 @@ public class GameActions implements ActionHandler {
             return ActionResult.fail(Protocol.BAD_REQUEST, "No command given");
         }
         return sendCommand(client, command.strip().replaceFirst("^/", ""), false);
+    }
+
+    /** Sends a saved chat message, like typing it into chat. Placeholders fill in the player's position. */
+    private static ActionResult chat(Minecraft client, JsonObject args) {
+        LocalPlayer player = client.player;
+        if (player == null || client.getConnection() == null) {
+            return ActionResult.fail(Protocol.NOT_IN_WORLD, "Join a world first");
+        }
+        String template = string(args, "message");
+        BlockPos pos = player.blockPosition();
+        String message = ChatMessage.fill(template != null ? template : "", Map.of(
+                "x", String.valueOf(pos.getX()),
+                "y", String.valueOf(pos.getY()),
+                "z", String.valueOf(pos.getZ()),
+                "coords", pos.getX() + " " + pos.getY() + " " + pos.getZ()));
+        String problem = ChatMessage.problem(message);
+        if (problem != null) {
+            return ActionResult.fail(Protocol.BAD_REQUEST, problem);
+        }
+        client.getConnection().sendChat(message);
+        return ActionResult.OK;
     }
 
     private static ActionResult weather(Minecraft client, JsonObject args) {

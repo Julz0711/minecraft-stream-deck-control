@@ -22,9 +22,10 @@ This repository has two parts:
 | Screenshot | Flashes on capture | F2 |
 | Debug screen | On or off | F3 |
 | Field of view + / − | FOV | |
-| Volume + / − / mute | Percent | Master volume |
+| Volume + / − / mute | Percent | Master or one sound category (music, jukebox/note blocks, hostile mobs, ...) |
 | Fullscreen | On or off | F11 |
 | Open menu | | Pause menu, chat or inventory |
+| Chat message | Your label | Sends a saved message, e.g. `gg` or `I'm at {coords}` |
 | Chat command | Your label | Any command; off until enabled in the mod settings, optional press-twice confirm |
 | Set weather | Current weather highlighted | Admin |
 | Set time | In-game clock | Admin |

@@ -39,6 +39,11 @@ public final class GameState {
         double volume = client.options.getSoundSourceOptionInstance(SoundSource.MASTER).get();
         state.addProperty("volume", GameActions.percent(volume));
         state.addProperty("muted", volume <= 0);
+        JsonObject volumes = new JsonObject();
+        for (SoundSource source : SoundSource.values()) {
+            volumes.addProperty(source.getName(), GameActions.percent(client.options.getSoundSourceOptionInstance(source).get()));
+        }
+        state.add("volumes", volumes);
         state.addProperty("fullscreen", client.options.fullscreen().get());
         state.addProperty("fps", client.getFps());
         state.addProperty("perspective", client.options.getCameraType().name().toLowerCase(Locale.ROOT));

@@ -28,6 +28,8 @@ export type GameState = Record<string, unknown> & {
 	fov?: number;
 	volume?: number;
 	muted?: boolean;
+	/** Percent per sound category, e.g. { master: 100, record: 40 }. */
+	volumes?: Record<string, number>;
 	fps?: number;
 	position?: { x: number; y: number; z: number } | null;
 	time?: { day: number; timeOfDay: number } | null;

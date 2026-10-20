@@ -63,8 +63,8 @@ Otherwise it sends an `error` and closes the connection:
 | `render_distance` | `delta` (default 1) or `value` | Clamped to the game's range. |
 | `simulation_distance` | `delta` (default 1) or `value` | Singleplayer only. |
 | `fov` | `delta` (default 5) or `value` | 30 to 110. |
-| `volume` | `delta` (default 10) or `value`, in percent | Master volume. |
-| `mute` | `on` (optional) | Toggles; unmuting restores the previous volume. |
+| `volume` | `delta` (default 10) or `value`, in percent; `source` (optional) | `source` is a sound category: `master` (default), `music`, `record` (jukebox and note blocks), `weather`, `block`, `hostile`, `neutral`, `player`, `ambient`, `voice`. |
+| `mute` | `on`, `source` (both optional) | Toggles; unmuting restores the previous volume of that category. |
 | `fullscreen` | `on` (optional) | Toggles. |
 | `perspective` | `to` (optional): `first_person`, `third_person_back`, `third_person_front` | Cycles like F5. |
 | `hide_hud` | `on` (optional) | Like F1. |
@@ -73,6 +73,7 @@ Otherwise it sends an `error` and closes the connection:
 | `screenshot` | | Like F2. |
 | `open_screen` | `screen`: `pause`, `chat`, `inventory` | Chat and inventory fail with `screen_open` while a menu is open. |
 | `command` | `command`, with or without `/` | Needs **Chat command keys** turned on. |
+| `chat` | `message` | Sends a chat message as if typed. `{x}`, `{y}`, `{z}` and `{coords}` are filled in. Up to 256 characters; messages starting with `/` are refused (use `command`). |
 | `weather` | `weather`: `clear`, `rain`, `thunder` | Admin. |
 | `time` | `time`: `day`, `noon`, `night`, `midnight` | Admin. |
 | `daylight_cycle` | `on` (optional) | Admin. Sets the `advance_time` game rule. |
@@ -100,7 +101,8 @@ A key set to `null` was removed (for example `position` after leaving the world)
 | `inWorld` | boolean | |
 | `singleplayer` | boolean | |
 | `renderDistance`, `simulationDistance`, `fov` | number | |
-| `volume` | number, percent | |
+| `volume` | number, percent (master) | |
+| `volumes` | object, percent per sound category, e.g. `{ "master": 100, "record": 40 }` | |
 | `muted`, `fullscreen`, `hudHidden`, `debugOverlay`, `cinematic` | boolean | |
 | `fps` | number | |
 | `perspective` | `first_person`, `third_person_back`, `third_person_front` | |

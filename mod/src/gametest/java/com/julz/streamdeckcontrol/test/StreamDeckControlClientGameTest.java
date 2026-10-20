@@ -91,6 +91,17 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
         context.waitFor(client -> deck.state("muted").getAsBoolean());
         expectOk(context, deck, "mute", "{}");
         context.waitFor(client -> !deck.state("muted").getAsBoolean() && deck.state("volume").getAsInt() == 50);
+
+        // One sound category (jukebox and note blocks) on its own; master stays where it was
+        expectOk(context, deck, "volume", "{\"source\":\"record\",\"value\":30}");
+        context.waitFor(client -> deck.state("volumes").getAsJsonObject().get("record").getAsInt() == 30);
+        expectOk(context, deck, "mute", "{\"source\":\"record\"}");
+        context.waitFor(client -> deck.state("volumes").getAsJsonObject().get("record").getAsInt() == 0);
+        expectOk(context, deck, "mute", "{\"source\":\"record\"}");
+        context.waitFor(client -> deck.state("volumes").getAsJsonObject().get("record").getAsInt() == 30);
+        assertEquals(50, deck.state("volume").getAsInt(), "master volume after changing one category");
+        JsonObject unknown = deck.request(context, "volume", "{\"source\":\"kazoo\"}");
+        assertEquals("bad_request", unknown.get("error").getAsString(), "unknown sound category");
     }
 
     private static void testView(ClientGameTestContext context, Deck deck) {
@@ -140,6 +151,10 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
     }
 
     private static void testCommands(ClientGameTestContext context, Deck deck) {
+        expectOk(context, deck, "chat", "{\"message\":\"hello from the deck at {coords}\"}");
+        JsonObject slash = deck.request(context, "chat", "{\"message\":\"/say hi\"}");
+        assertEquals("bad_request", slash.get("error").getAsString(), "chat message that is a command");
+
         JsonObject disabled = deck.request(context, "command", "{\"command\":\"/say hi\"}");
         assertEquals("disabled", disabled.get("error").getAsString(), "chat command while turned off");
 

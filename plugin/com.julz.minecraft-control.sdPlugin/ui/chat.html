@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Minecraft Control</title>
+		<link rel="stylesheet" href="pi.css" />
+	</head>
+	<body>
+		<div class="item">
+			<label for="message">Message</label>
+			<input type="text" id="message" data-setting="message" placeholder="gg" maxlength="256" />
+		</div>
+		<div class="item">
+			<label for="label">Key label</label>
+			<input type="text" id="label" data-setting="label" placeholder="Shown on the key" />
+		</div>
+		<p class="hint">Sent as if you typed it. {coords} becomes your position, or use {x}, {y} and {z}. For commands, use a Chat command key.</p>
+		<script src="pi.js"></script>
+	</body>
+</html>

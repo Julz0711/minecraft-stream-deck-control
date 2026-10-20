@@ -39,14 +39,20 @@ function valueFontSize(value: string): number {
 	return 16;
 }
 
+/** Cuts values that wouldn't fit on the key even at the smallest size. */
+function fitValue(value: string): string {
+	return value.length > 14 ? `${value.slice(0, 13).trimEnd()}…` : value;
+}
+
 /** Renders a key face as an SVG string, 144 × 144 (the @2x key size). */
 export function renderKey(face: KeyFace): string {
 	const color = face.disabled ? COLORS.muted : (face.color ?? COLORS.text);
 	const textColor = face.disabled ? COLORS.muted : COLORS.text;
 	const hasValue = face.value !== undefined && face.value !== "";
-	const glyphSize = hasValue ? 60 : 84;
+	// A small icon in the middle of the key, with the label above and the value below it
+	const glyphSize = hasValue || face.label ? 48 : 72;
 	const glyphX = (SIZE - glyphSize) / 2;
-	const glyphY = hasValue ? (face.label ? 30 : 18) : face.label ? 38 : 30;
+	const glyphY = (SIZE - glyphSize) / 2 - (hasValue ? 6 : 0);
 	const parts: string[] = [
 		`<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">`,
 		`<rect width="${SIZE}" height="${SIZE}" fill="${face.background ?? COLORS.background}"/>`,
@@ -60,7 +66,7 @@ export function renderKey(face: KeyFace): string {
 		);
 	}
 	if (hasValue) {
-		const value = face.value!;
+		const value = fitValue(face.value!);
 		parts.push(
 			`<text x="72" y="130" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" ` +
 				`font-size="${valueFontSize(value)}" font-weight="bold" fill="${textColor}">${escape(value)}</text>`

@@ -144,7 +144,7 @@
 			"Name": "Volume",
 			"UUID": "com.julz.minecraft-control.volume",
 			"Icon": "imgs/actions/volume",
-			"Tooltip": "Master volume up, down or mute; shows the current volume.",
+			"Tooltip": "Master volume, or one sound category such as music or note blocks: up, down or mute.",
 			"Controllers": [
 				"Keypad"
 			],
@@ -190,6 +190,23 @@
 				}
 			],
 			"PropertyInspectorPath": "ui/screen.html"
+		},
+		{
+			"Name": "Chat message",
+			"UUID": "com.julz.minecraft-control.chat",
+			"Icon": "imgs/actions/chat",
+			"Tooltip": "Sends a chat message you set, like gg or your coordinates.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/chat-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/chat.html"
 		},
 		{
 			"Name": "Chat command",

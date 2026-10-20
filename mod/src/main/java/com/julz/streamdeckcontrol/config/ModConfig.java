@@ -13,7 +13,9 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModConfig {
     public static final int DEFAULT_PORT = 25570;
@@ -36,8 +38,8 @@ public class ModConfig {
     public boolean cinematicHidesHud = true;
     /** Web pages allowed to use the API, e.g. "http://localhost:3000". Programs that send no Origin header are always allowed. */
     public List<String> allowedOrigins = new ArrayList<>();
-    /** Master volume to restore when unmuting. */
-    public double volumeBeforeMute = 1.0;
+    /** Volume to restore when unmuting, per sound category ("master", "music", "record", ...). */
+    public Map<String, Double> mutedVolumes = new HashMap<>();
 
     public static ModConfig getInstance() {
         if (instance == null) {
@@ -85,6 +87,9 @@ public class ModConfig {
         if (allowedOrigins == null) {
             allowedOrigins = new ArrayList<>();
         }
-        volumeBeforeMute = Math.clamp(volumeBeforeMute, 0.05, 1.0);
+        if (mutedVolumes == null) {
+            mutedVolumes = new HashMap<>();
+        }
+        mutedVolumes.replaceAll((source, volume) -> volume == null || volume.isNaN() ? 1.0 : Math.clamp(volume, 0.05, 1.0));
     }
 }

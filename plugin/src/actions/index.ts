@@ -89,16 +89,31 @@ export class FovKey extends StepKey {
 	}
 }
 
-type VolumeSettings = { mode?: "up" | "down" | "mute"; step?: string };
+type VolumeSettings = { mode?: "up" | "down" | "mute"; step?: string; source?: string };
+
+/** Short key labels for the game's sound categories. */
+const SOUND_LABELS: Record<string, string> = {
+	master: "Volume",
+	music: "Music",
+	record: "Note blocks",
+	weather: "Weather",
+	block: "Blocks",
+	hostile: "Hostile",
+	neutral: "Friendly",
+	player: "Players",
+	ambient: "Ambient",
+	voice: "Voice"
+};
 
 @action({ UUID: `${UUID}.volume` })
 export class VolumeKey extends GameKey<VolumeSettings> {
 	protected face({ settings, game }: KeyContext<VolumeSettings>): KeyFace {
-		const muted = game.state.muted === true;
-		const volume = game.state.volume;
+		const source = settings.source ?? "master";
+		const volume = source === "master" ? game.state.volume : game.state.volumes?.[source];
+		const muted = source === "master" ? game.state.muted === true : volume === 0;
 		return {
 			glyph: muted ? "mute" : "volume",
-			label: "Volume",
+			label: SOUND_LABELS[source] ?? source,
 			value: muted ? "MUTED" : volume === undefined ? "" : `${volume}%`,
 			badge: settings.mode === "down" ? "−" : settings.mode === "mute" ? undefined : "+",
 			color: muted ? COLORS.warn : undefined
@@ -106,10 +121,11 @@ export class VolumeKey extends GameKey<VolumeSettings> {
 	}
 
 	protected press({ settings, game }: KeyContext<VolumeSettings>) {
+		const source = settings.source ?? "master";
 		if (settings.mode === "mute") {
-			return game.request("mute");
+			return game.request("mute", { source });
 		}
-		return game.request("volume", { delta: delta({ direction: settings.mode === "down" ? "down" : "up", step: settings.step }, 10) });
+		return game.request("volume", { source, delta: delta({ direction: settings.mode === "down" ? "down" : "up", step: settings.step }, 10) });
 	}
 }
 
@@ -233,6 +249,32 @@ export class OpenScreenKey extends GameKey<ScreenSettings> {
 
 	protected press({ settings, game }: KeyContext<ScreenSettings>) {
 		return game.request("open_screen", { screen: settings.screen ?? "pause" });
+	}
+}
+
+type ChatSettings = { message?: string; label?: string };
+
+@action({ UUID: `${UUID}.chat` })
+export class ChatKey extends GameKey<ChatSettings> {
+	protected face({ settings, game }: KeyContext<ChatSettings>): KeyFace {
+		const label = settings.label?.trim() || settings.message?.trim() || "Chat";
+		return { glyph: "chat", value: label, disabled: !inWorld(game) || !settings.message?.trim() };
+	}
+
+	protected override offlineFace(ctx: KeyContext<ChatSettings>): KeyFace {
+		return { ...super.offlineFace(ctx), value: this.face(ctx).value };
+	}
+
+	protected async press({ settings, game }: KeyContext<ChatSettings>, action: KeyAction<ChatSettings>) {
+		const message = settings.message?.trim();
+		if (!message) {
+			return { ok: false as const, error: "no_message", message: "Set a message in the key settings" };
+		}
+		const result = await game.request("chat", { message });
+		if (result.ok) {
+			await action.showOk();
+		}
+		return result;
 	}
 }
 

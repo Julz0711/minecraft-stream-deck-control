@@ -1,6 +1,7 @@
 import streamDeck from "@elgato/streamdeck";
 
 import {
+	ChatKey,
 	CinematicKey,
 	CommandKey,
 	DaylightCycleKey,
@@ -36,6 +37,7 @@ for (const key of [
 	VolumeKey,
 	FullscreenKey,
 	OpenScreenKey,
+	ChatKey,
 	CommandKey,
 	WeatherKey,
 	TimeKey,
