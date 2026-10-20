@@ -1,0 +1,41 @@
+# Temporary: prints the Minecraft 26.3 API surface this mod uses. Removed before merge.
+name: API probe
+
+on:
+  push:
+    branches: [claude/project-thread-bs6tar]
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew help -q || true
+      - name: javap
+        run: |
+          JAR=$(find ~/.gradle/caches .gradle -name "minecraft-*.jar" -path "*26.3*" 2>/dev/null | grep -v sources | head -20)
+          echo "$JAR"
+          CP=$(echo "$JAR" | tr '\n' ':')
+          FAPI=$(find ~/.gradle/caches -name "fabric-*.jar" 2>/dev/null | grep -v sources | tr '\n' ':')
+          F='sed -E s/net\.minecraft\.//g;s/java\.lang\.//g;s/java\.util\.//g'
+          dis() { javap -cp "$CP" -c -p "net.minecraft.$1" | awk -v m="$2" 'index($0, m"(") && /\(/ {p=1} p {print} p && /^$/ {exit}' | grep -E 'invoke|getstatic|getfield|putfield|ldc|^  [a-z]' | $F | head -${3:-120}; }
+          echo "=================== KeyboardHandler.handleDebugKeys"; dis client.KeyboardHandler handleDebugKeys 400
+          echo "=================== KeyboardHandler methods"; javap -cp "$CP" -p net.minecraft.client.KeyboardHandler | grep '(' | grep -v lambda | $F
+          for c in client.gui.components.debug.DebugScreenEntries client.gui.components.debug.DebugScreenEntryList client.multiplayer.PlayerInfo client.multiplayer.ServerData resources.ResourceKey core.Holder core.Direction; do
+            echo "=================== $c"; javap -cp "$CP" "net.minecraft.$c" 2>&1 | grep -v lambda | $F | head -120
+          done
+          echo "=================== ClientPacketListener public"; javap -cp "$CP" net.minecraft.client.multiplayer.ClientPacketListener | grep '(' | grep -iE 'player|server|latency|tick|online|get' | $F
+          echo "=================== Minecraft public"; javap -cp "$CP" net.minecraft.client.Minecraft | grep -iE 'server|debug|entityRender|hitbox|tps' | $F
+          echo "=================== EntityRenderDispatcher hitbox"; javap -cp "$CP" -p net.minecraft.client.renderer.entity.EntityRenderDispatcher | grep -iE 'hit' | $F
+          echo "=================== DebugRenderer"; javap -cp "$CP" -p net.minecraft.client.renderer.debug.DebugRenderer | grep '(' | $F | head -40
+          echo "=================== LevelRenderer allChanged"; javap -cp "$CP" net.minecraft.client.renderer.LevelRenderer | grep -iE 'allChanged|reload' | $F
+          echo "=================== Minecraft reload"; javap -cp "$CP" net.minecraft.client.Minecraft | grep -iE 'reload' | $F
+          echo "=================== TickRateManager"; javap -cp "$CP" net.minecraft.world.TickRateManager | grep '(' | $F
