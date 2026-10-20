@@ -43,7 +43,7 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
         try (Deck deck = Deck.connect(port)) {
             deck.send("{\"type\":\"hello\",\"protocol\":1,\"token\":\"" + code + "\",\"client\":\"Test\"}");
             context.waitFor(client -> deck.welcome != null);
-            assertEquals(18, deck.welcome.getAsJsonArray("actions").size(), "number of actions");
+            assertEquals(19, deck.welcome.getAsJsonArray("actions").size(), "number of actions");
             assertEquals(false, deck.state("inWorld").getAsBoolean(), "inWorld on the title screen");
 
             // Cheats on, so the admin keys can be tested too
@@ -127,7 +127,8 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
             assertEquals(true, client.options.smoothCamera, "smooth camera in cinematic mode");
             assertEquals(true, client.gui.hud.isHidden(), "HUD hidden in cinematic mode");
         });
-        context.waitTicks(5);
+        // Let the letterbox bars finish fading in
+        context.waitTicks(20);
         context.takeScreenshot("stream-deck-control-cinematic");
         expectOk(context, deck, "cinematic", "{}");
         context.waitFor(client -> !deck.state("cinematic").getAsBoolean());
@@ -139,6 +140,33 @@ public class StreamDeckControlClientGameTest implements FabricClientGameTest {
         expectOk(context, deck, "screenshot", "{}");
 
         context.waitFor(client -> deck.has("position") && deck.has("time") && deck.has("weather") && deck.has("gameMode"));
+
+        // Compass and server keys
+        context.waitFor(client -> deck.has("yaw") && deck.has("biome") && deck.has("server"));
+        assertEquals(true, deck.state("biome").getAsString().startsWith("minecraft:"), "biome id");
+        assertEquals("Singleplayer", deck.state("server").getAsJsonObject().get("name").getAsString(), "server name");
+
+        // F3 shortcuts
+        expectOk(context, deck, "debug_key", "{\"key\":\"chunk_borders\"}");
+        context.waitFor(client -> deck.state("chunkBorders").getAsBoolean());
+        expectOk(context, deck, "debug_key", "{\"key\":\"chunk_borders\"}");
+        context.waitFor(client -> !deck.state("chunkBorders").getAsBoolean());
+        expectOk(context, deck, "debug_key", "{\"key\":\"hitboxes\"}");
+        context.waitFor(client -> deck.state("hitboxes").getAsBoolean());
+        context.waitTicks(2);
+        context.takeScreenshot("stream-deck-control-hitboxes");
+        expectOk(context, deck, "debug_key", "{\"key\":\"hitboxes\"}");
+        context.waitFor(client -> !deck.state("hitboxes").getAsBoolean());
+        boolean tooltips = deck.state("advancedTooltips").getAsBoolean();
+        expectOk(context, deck, "debug_key", "{\"key\":\"advanced_tooltips\"}");
+        context.waitFor(client -> deck.state("advancedTooltips").getAsBoolean() != tooltips);
+        expectOk(context, deck, "debug_key", "{\"key\":\"advanced_tooltips\"}");
+        expectOk(context, deck, "debug_key", "{\"key\":\"reload_chunks\"}");
+        expectOk(context, deck, "debug_key", "{\"key\":\"copy_location\"}");
+        String location = context.computeOnClient(client -> com.julz.streamdeckcontrol.client.GameActions.locationCommand(client.player));
+        assertEquals(true, location.startsWith("/execute in minecraft:overworld run tp @s "), "copied location: " + location);
+        JsonObject unknownKey = deck.request(context, "debug_key", "{\"key\":\"nope\"}");
+        assertEquals("bad_request", unknownKey.get("error").getAsString(), "unknown debug key");
         context.waitFor(client -> deck.state("fps").getAsInt() > 0);
     }
 

@@ -3,7 +3,7 @@ import type { JsonObject } from "@elgato/utils";
 
 import type { GlyphName } from "../glyphs";
 import { COLORS, type KeyFace } from "../keys";
-import { formatClock } from "../format";
+import { biomeName, cardinal, formatClock, heading } from "../format";
 import type { GameState, MinecraftConnection } from "../minecraft";
 import { canCheat, GameKey, type KeyContext, onOff } from "./game-key";
 
@@ -421,4 +421,102 @@ export class StatusKey extends GameKey<StatusSettings> {
 
 	// Read-only: pressing does nothing.
 	protected async press() {}
+}
+
+@action({ UUID: `${UUID}.compass` })
+export class CompassKey extends GameKey<NoSettings> {
+	protected face({ game }: KeyContext<NoSettings>): KeyFace {
+		const { yaw, biome } = game.state;
+		if (yaw === undefined || yaw === null) {
+			return { glyph: "compass", label: "Compass", disabled: true };
+		}
+		const facing = heading(yaw);
+		return {
+			glyph: "compass",
+			label: biome ? biomeName(biome) : "Compass",
+			value: cardinal(facing),
+			// The needle keeps pointing north as you turn; 15° steps keep the key from redrawing on every twitch.
+			rotate: -Math.round(facing / 15) * 15
+		};
+	}
+
+	// Read-only: pressing does nothing.
+	protected async press() {}
+}
+
+type ServerSettings = { show?: "ping" | "players" | "name" };
+
+@action({ UUID: `${UUID}.server` })
+export class ServerKey extends GameKey<ServerSettings> {
+	protected face({ settings, game }: KeyContext<ServerSettings>): KeyFace {
+		const server = game.state.server;
+		if (!server || !inWorld(game)) {
+			return { glyph: "server", label: "Server", disabled: true };
+		}
+		switch (settings.show ?? "ping") {
+			case "players":
+				return { glyph: "server", label: "Players", value: server.players === undefined ? "" : String(server.players) };
+			case "name":
+				return { glyph: "server", label: "Server", value: server.name ?? "" };
+			default: {
+				const ping = server.ping;
+				if (ping === undefined) {
+					return { glyph: "server", label: "Ping", value: "LOCAL" };
+				}
+				return { glyph: "server", label: "Ping", value: `${ping}ms`, color: ping < 100 ? COLORS.on : ping >= 250 ? COLORS.warn : undefined };
+			}
+		}
+	}
+
+	// Read-only: pressing does nothing.
+	protected async press() {}
+}
+
+type DebugShortcut =
+	| "chunk_borders"
+	| "hitboxes"
+	| "advanced_tooltips"
+	| "reload_chunks"
+	| "reload_resources"
+	| "copy_location"
+	| "pause_on_lost_focus";
+
+type DebugShortcutSettings = { key?: DebugShortcut };
+
+const DEBUG_SHORTCUTS: Record<DebugShortcut, { glyph: GlyphName; label: string; isOn?: (state: GameState) => boolean | null | undefined; needsWorld: boolean; hiddenByServer?: boolean }> = {
+	chunk_borders: { glyph: "chunkBorders", label: "Chunks", isOn: (s) => s.chunkBorders, needsWorld: true, hiddenByServer: true },
+	hitboxes: { glyph: "hitboxes", label: "Hitboxes", isOn: (s) => s.hitboxes, needsWorld: true, hiddenByServer: true },
+	advanced_tooltips: { glyph: "tooltip", label: "Tooltips", isOn: (s) => s.advancedTooltips, needsWorld: false },
+	pause_on_lost_focus: { glyph: "focus", label: "Pause", isOn: (s) => s.pauseOnLostFocus, needsWorld: false },
+	reload_chunks: { glyph: "reload", label: "Chunks", needsWorld: true },
+	reload_resources: { glyph: "resources", label: "Resources", needsWorld: false },
+	copy_location: { glyph: "copy", label: "Location", needsWorld: true, hiddenByServer: true }
+};
+
+/** F3 + key shortcuts: chunk borders (G), hitboxes (B), advanced tooltips (H), reload chunks (A) and more. */
+@action({ UUID: `${UUID}.debug-shortcut` })
+export class DebugShortcutKey extends GameKey<DebugShortcutSettings> {
+	protected face({ settings, game }: KeyContext<DebugShortcutSettings>): KeyFace {
+		const shortcut = DEBUG_SHORTCUTS[settings.key ?? "chunk_borders"] ?? DEBUG_SHORTCUTS.chunk_borders;
+		if (shortcut.needsWorld && !inWorld(game)) {
+			return { glyph: shortcut.glyph, label: shortcut.label, disabled: true };
+		}
+		if (shortcut.hiddenByServer && game.state.reducedDebugInfo === true) {
+			return { glyph: "lock", label: shortcut.label, value: "HIDDEN", disabled: true };
+		}
+		if (!shortcut.isOn) {
+			return { glyph: shortcut.glyph, label: shortcut.label, value: settings.key === "copy_location" ? "COPY" : "RELOAD" };
+		}
+		const on = shortcut.isOn(game.state);
+		return { glyph: shortcut.glyph, label: shortcut.label, value: on === undefined || on === null ? "" : onOff(on), color: on ? COLORS.on : undefined };
+	}
+
+	protected async press({ settings, game }: KeyContext<DebugShortcutSettings>, action: KeyAction<DebugShortcutSettings>) {
+		const key = settings.key ?? "chunk_borders";
+		const result = await game.request("debug_key", { key });
+		if (result.ok && !DEBUG_SHORTCUTS[key]?.isOn) {
+			await action.showOk();
+		}
+		return result;
+	}
 }

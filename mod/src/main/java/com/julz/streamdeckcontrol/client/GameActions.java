@@ -7,12 +7,14 @@ import com.julz.streamdeckcontrol.core.ActionHandler;
 import com.julz.streamdeckcontrol.core.ActionResult;
 import com.julz.streamdeckcontrol.core.ChatMessage;
 import com.julz.streamdeckcontrol.core.Protocol;
+import com.julz.streamdeckcontrol.mixin.MinecraftAccessor;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -55,6 +57,7 @@ public class GameActions implements ActionHandler {
         actions.put("time", GameActions::time);
         actions.put("daylight_cycle", GameActions::daylightCycle);
         actions.put("game_mode", GameActions::gameMode);
+        actions.put("debug_key", GameActions::debugKey);
     }
 
     @Override
@@ -245,6 +248,56 @@ public class GameActions implements ActionHandler {
             }
         }
         return ActionResult.OK;
+    }
+
+    // F3 shortcuts
+
+    /** The F3 + key combinations, by name. Debug views are refused where the server hides debug info, like vanilla. */
+    private static ActionResult debugKey(Minecraft client, JsonObject args) {
+        String key = string(args, "key");
+        if (key == null) {
+            return ActionResult.fail(Protocol.BAD_REQUEST, "No debug key given");
+        }
+        LocalPlayer player = client.player;
+        boolean needsWorld = !key.equals("advanced_tooltips") && !key.equals("reload_resources") && !key.equals("pause_on_lost_focus");
+        if (needsWorld && (player == null || client.level == null)) {
+            return ActionResult.fail(Protocol.NOT_IN_WORLD, "Join a world first");
+        }
+        boolean reduced = player != null && player.isReducedDebugInfo();
+        switch (key) {
+            case "chunk_borders", "hitboxes", "copy_location" -> {
+                if (reduced) {
+                    return ActionResult.fail(Protocol.DISABLED, "This server hides debug info");
+                }
+            }
+            default -> {
+            }
+        }
+        switch (key) {
+            case "chunk_borders" -> client.debugEntries.toggleStatus(DebugScreenEntries.CHUNK_BORDERS);
+            case "hitboxes" -> client.debugEntries.toggleStatus(DebugScreenEntries.ENTITY_HITBOXES);
+            case "advanced_tooltips" -> {
+                client.options.advancedItemTooltips = !client.options.advancedItemTooltips;
+                client.options.save();
+            }
+            case "pause_on_lost_focus" -> {
+                client.options.pauseOnLostFocus = !client.options.pauseOnLostFocus;
+                client.options.save();
+            }
+            case "reload_chunks" -> ((MinecraftAccessor) client).streamDeckControl$levelExtractor().allChanged();
+            case "reload_resources" -> client.reloadResourcePacks();
+            case "copy_location" -> client.keyboardHandler.setClipboard(locationCommand(player));
+            default -> {
+                return ActionResult.fail(Protocol.BAD_REQUEST, "Unknown debug key: " + key);
+            }
+        }
+        return ActionResult.OK;
+    }
+
+    /** The same teleport command F3+C copies. */
+    public static String locationCommand(LocalPlayer player) {
+        return String.format(Locale.ROOT, "/execute in %s run tp @s %.2f %.2f %.2f %.2f %.2f",
+                player.level().dimension().identifier(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
     }
 
     // Commands

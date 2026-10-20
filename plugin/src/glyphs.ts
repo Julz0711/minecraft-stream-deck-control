@@ -53,6 +53,18 @@ export const GLYPHS = {
 	// Status
 	fps: `<path d="M6 40 V8 M6 40 H42"/><path d="M10 32 L18 22 L26 28 L40 12"/>`,
 	coords: `<circle cx="24" cy="24" r="16"/><path d="M24 4 V44 M4 24 H44"/><circle cx="24" cy="24" r="3" fill="currentColor"/>`,
+	// A compass needle pointing north (up)
+	compass: `<circle cx="24" cy="24" r="19"/><path d="M24 9 L29 24 H19 Z" fill="currentColor"/><path d="M19 24 H29 L24 39 Z"/>`,
+	// A server rack
+	server: `<rect x="8" y="6" width="32" height="14" rx="2"/><rect x="8" y="28" width="32" height="14" rx="2"/><path d="M14 13 H16 M14 35 H16 M24 20 V28"/>`,
+	// F3 shortcuts
+	chunkBorders: `<path d="M24 4 L42 14 V34 L24 44 L6 34 V14 Z" stroke-dasharray="4 3"/><path d="M6 14 L24 24 L42 14 M24 24 V44"/>`,
+	hitboxes: `<rect x="12" y="6" width="24" height="36" stroke-dasharray="4 3"/><path d="M24 6 V2"/><circle cx="24" cy="15" r="4"/><path d="M24 19 V31 M17 24 H31 M24 31 L19 40 M24 31 L29 40"/>`,
+	tooltip: `<rect x="6" y="8" width="36" height="26" rx="3"/><path d="M12 16 H30 M12 22 H36 M12 28 H24"/><path d="M18 34 L18 42 L26 34"/>`,
+	reload: `<path d="M38 18 A15 15 0 1 0 39 30"/><path d="M40 8 V18 H30"/>`,
+	resources: `<rect x="8" y="8" width="14" height="14"/><rect x="26" y="8" width="14" height="14"/><rect x="8" y="26" width="14" height="14"/><path d="M40 30 A7 7 0 1 1 36 26 M40 24 V30 H34"/>`,
+	copy: `<rect x="14" y="14" width="24" height="28" rx="2"/><path d="M10 34 V8 A2 2 0 0 1 12 6 H30"/><circle cx="26" cy="26" r="3" fill="currentColor"/>`,
+	focus: `<rect x="6" y="8" width="36" height="26" rx="3"/><path d="M20 15 V27 M28 15 V27" stroke-width="4"/><path d="M16 42 H32 M24 34 V42"/>`,
 	plus: `<path d="M24 10 V38 M10 24 H38"/>`,
 	minus: `<path d="M10 24 H38"/>`,
 	lock: `<rect x="10" y="22" width="28" height="20" rx="3"/><path d="M16 22 V14 A8 8 0 0 1 32 14 V22"/>`,

@@ -3,7 +3,8 @@
 	"package": "com.julz.streamdeckcontrol.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"GuiMixin"
+		"GuiMixin",
+		"MinecraftAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

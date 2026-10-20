@@ -10,6 +10,12 @@ public final class Cinematic {
     private static boolean smoothCameraBefore;
     private static boolean hidHud;
 
+    /** How long the letterbox bars take to fade in or out. */
+    private static final long FADE_NANOS = 600_000_000L;
+    /** Bar progress (0 = gone, 1 = fully in) when cinematic mode was last switched, and when that was. */
+    private static double fadeFrom;
+    private static long fadeStart;
+
     private Cinematic() {
     }
 
@@ -21,6 +27,8 @@ public final class Cinematic {
         if (on == active) {
             return;
         }
+        fadeFrom = barProgress(System.nanoTime());
+        fadeStart = System.nanoTime();
         active = on;
         if (on) {
             smoothCameraBefore = client.options.smoothCamera;
@@ -44,6 +52,15 @@ public final class Cinematic {
         if (active) {
             set(client, false);
         }
+        fadeFrom = 0;
+    }
+
+    /** How far the bars have faded in, eased so they start and finish gently. */
+    static double barProgress(long now) {
+        double t = Math.clamp((now - fadeStart) / (double) FADE_NANOS, 0.0, 1.0);
+        double eased = t * t * (3 - 2 * t);
+        double target = active ? 1.0 : 0.0;
+        return fadeFrom + (target - fadeFrom) * eased;
     }
 
     /** Height of each bar in GUI pixels for a screen of the given size. */
@@ -57,15 +74,21 @@ public final class Cinematic {
 
     /** Called after the HUD is drawn; screens and toasts are drawn on top of the bars. */
     public static void drawLetterbox(Minecraft client, GuiGraphicsExtractor graphics) {
-        if (!active || client.level == null) {
+        if (client.level == null) {
+            return;
+        }
+        double progress = barProgress(System.nanoTime());
+        if (progress <= 0) {
             return;
         }
         int width = client.getWindow().getGuiScaledWidth();
         int height = client.getWindow().getGuiScaledHeight();
-        int bar = barHeight(width, height, ModConfig.getInstance().letterboxRatio);
+        // The bars slide in from the edges and darken as they come, like a film letterbox
+        int bar = (int) Math.round(barHeight(width, height, ModConfig.getInstance().letterboxRatio) * progress);
         if (bar > 0) {
-            graphics.fill(0, 0, width, bar, 0xFF000000);
-            graphics.fill(0, height - bar, width, height, 0xFF000000);
+            int color = (int) Math.round(progress * 255) << 24;
+            graphics.fill(0, 0, width, bar, color);
+            graphics.fill(0, height - bar, width, height, color);
         }
     }
 }

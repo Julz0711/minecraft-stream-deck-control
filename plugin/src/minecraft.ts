@@ -35,6 +35,16 @@ export type GameState = Record<string, unknown> & {
 	time?: { day: number; timeOfDay: number } | null;
 	weather?: "clear" | "rain" | "thunder" | null;
 	daylightCycle?: boolean | null;
+	advancedTooltips?: boolean;
+	pauseOnLostFocus?: boolean;
+	chunkBorders?: boolean | null;
+	hitboxes?: boolean | null;
+	reducedDebugInfo?: boolean | null;
+	/** Minecraft yaw in whole degrees, 0 to 359 (0 = south). */
+	yaw?: number | null;
+	/** Biome id, e.g. "minecraft:plains". */
+	biome?: string | null;
+	server?: { name?: string; players?: number; ping?: number } | null;
 	gameMode?: "survival" | "creative" | "adventure" | "spectator" | null;
 };
 

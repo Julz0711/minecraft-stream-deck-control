@@ -23,6 +23,8 @@ export type KeyFace = {
 	/** A small corner badge, e.g. "+" or "−". */
 	badge?: string;
 	background?: string;
+	/** Turns the icon clockwise by this many degrees, e.g. a compass needle. */
+	rotate?: number;
 };
 
 const SIZE = 144;
@@ -53,11 +55,12 @@ export function renderKey(face: KeyFace): string {
 	const glyphSize = hasValue || face.label ? 48 : 72;
 	const glyphX = (SIZE - glyphSize) / 2;
 	const glyphY = (SIZE - glyphSize) / 2 - (hasValue ? 6 : 0);
+	const glyph = face.rotate ? `<g transform="rotate(${Math.round(face.rotate)} 24 24)">${GLYPHS[face.glyph]}</g>` : GLYPHS[face.glyph];
 	const parts: string[] = [
 		`<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">`,
 		`<rect width="${SIZE}" height="${SIZE}" fill="${face.background ?? COLORS.background}"/>`,
 		`<svg x="${glyphX}" y="${glyphY}" width="${glyphSize}" height="${glyphSize}" viewBox="0 0 48 48" fill="none" ` +
-			`stroke="${color}" color="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${GLYPHS[face.glyph]}</svg>`
+			`stroke="${color}" color="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${glyph}</svg>`
 	];
 	if (face.label) {
 		parts.push(

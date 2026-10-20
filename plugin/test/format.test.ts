@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatClock } from "../src/format";
+import { biomeName, cardinal, formatClock, heading } from "../src/format";
 import { renderKey } from "../src/keys";
 
 describe("formatClock", () => {
@@ -14,6 +14,30 @@ describe("formatClock", () => {
 
 	it("is empty outside a world", () => {
 		expect(formatClock({})).toBe("");
+	});
+});
+
+describe("compass", () => {
+	it("turns Minecraft yaw into a compass heading", () => {
+		expect(heading(0)).toBe(180);
+		expect(heading(90)).toBe(270);
+		expect(heading(180)).toBe(0);
+		expect(heading(-90)).toBe(90);
+		expect(heading(-450)).toBe(90);
+	});
+
+	it("names the nearest compass point", () => {
+		expect(cardinal(0)).toBe("N");
+		expect(cardinal(44)).toBe("NE");
+		expect(cardinal(90)).toBe("E");
+		expect(cardinal(200)).toBe("S");
+		expect(cardinal(350)).toBe("N");
+	});
+
+	it("makes biome ids readable", () => {
+		expect(biomeName("minecraft:dark_forest")).toBe("Dark Forest");
+		expect(biomeName("plains")).toBe("Plains");
+		expect(biomeName("terralith:alpine/highlands")).toBe("Alpine Highlands");
 	});
 });
 

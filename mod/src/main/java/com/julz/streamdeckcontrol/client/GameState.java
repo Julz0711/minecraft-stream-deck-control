@@ -2,6 +2,10 @@ package com.julz.streamdeckcontrol.client;
 
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -50,6 +54,8 @@ public final class GameState {
         state.addProperty("hudHidden", client.gui.hud.isHidden());
         state.addProperty("debugOverlay", client.debugEntries.isOverlayVisible());
         state.addProperty("cinematic", Cinematic.isActive());
+        state.addProperty("advancedTooltips", client.options.advancedItemTooltips);
+        state.addProperty("pauseOnLostFocus", client.options.pauseOnLostFocus);
 
         if (inWorld) {
             state.addProperty("canCheat", GameActions.canCheat(client));
@@ -65,6 +71,13 @@ public final class GameState {
             time.addProperty("day", clock / 24000 + 1);
             time.addProperty("timeOfDay", clock % 24000);
             state.add("time", time);
+            state.addProperty("chunkBorders", client.debugEntries.isCurrentlyEnabled(DebugScreenEntries.CHUNK_BORDERS));
+            state.addProperty("hitboxes", client.debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES));
+            state.addProperty("reducedDebugInfo", player.isReducedDebugInfo());
+            // Whole degrees, so small mouse movements don't flood the deck
+            state.addProperty("yaw", Math.floorMod(Math.round(player.getYRot()), 360));
+            state.addProperty("biome", level.getBiome(pos).getRegisteredName());
+            state.add("server", server(client, player));
             state.addProperty("weather", level.isThundering() ? "thunder" : level.isRaining() ? "rain" : "clear");
             if (client.gameMode != null) {
                 state.addProperty("gameMode", client.gameMode.getPlayerMode().getName());
@@ -78,6 +91,26 @@ public final class GameState {
             lastClockTime = Long.MIN_VALUE;
         }
         return state;
+    }
+
+    /** Server name, players online and the player's own ping. Ping is left out in singleplayer. */
+    private static JsonObject server(Minecraft client, LocalPlayer player) {
+        JsonObject server = new JsonObject();
+        ClientPacketListener connection = client.getConnection();
+        ServerData data = client.getCurrentServer();
+        if (client.hasSingleplayerServer()) {
+            server.addProperty("name", "Singleplayer");
+        } else if (data != null) {
+            server.addProperty("name", data.name);
+        }
+        if (connection != null) {
+            server.addProperty("players", connection.getOnlinePlayers().size());
+            PlayerInfo self = connection.getPlayerInfo(player.getUUID());
+            if (self != null && !client.hasSingleplayerServer()) {
+                server.addProperty("ping", self.getLatency());
+            }
+        }
+        return server;
     }
 
     /**

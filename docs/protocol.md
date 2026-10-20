@@ -77,6 +77,7 @@ Otherwise it sends an `error` and closes the connection:
 | `weather` | `weather`: `clear`, `rain`, `thunder` | Admin. |
 | `time` | `time`: `day`, `noon`, `night`, `midnight` | Admin. |
 | `daylight_cycle` | `on` (optional) | Admin. Sets the `advance_time` game rule. |
+| `debug_key` | `key`: `chunk_borders`, `hitboxes`, `advanced_tooltips`, `reload_chunks`, `reload_resources`, `copy_location`, `pause_on_lost_focus` | The F3 shortcuts (G, B, H, A, T, C, P). Chunk borders, hitboxes and copy location fail with `disabled` when the server hides debug info. |
 | `game_mode` | `mode` (optional): `survival`, `creative`, `adventure`, `spectator` | Admin. Without `mode`, cycles survival, creative, spectator. |
 
 Toggle actions flip the current value, or set it when `on` is given. Admin actions need operator rights on a server, or
@@ -110,6 +111,11 @@ A key set to `null` was removed (for example `position` after leaving the world)
 | `position` | `{ x, y, z }`, block coordinates | yes |
 | `time` | `{ day, timeOfDay }`, ticks 0 to 23999 where 0 is 06:00 | yes |
 | `weather` | `clear`, `rain`, `thunder` | yes |
+| `yaw` | number, whole degrees 0 to 359, Minecraft's rotation (0 = south, 90 = west) | yes |
+| `biome` | biome id, e.g. `minecraft:plains` | yes |
+| `server` | `{ name, players, ping }`; `ping` in ms, missing in singleplayer | yes |
+| `chunkBorders`, `hitboxes`, `reducedDebugInfo` | boolean | yes |
+| `advancedTooltips`, `pauseOnLostFocus` | boolean | |
 | `gameMode` | `survival`, `creative`, `adventure`, `spectator` | yes |
 | `daylightCycle` | boolean, known about a second after joining | yes |
 

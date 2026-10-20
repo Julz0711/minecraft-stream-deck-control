@@ -4,8 +4,10 @@ import {
 	ChatKey,
 	CinematicKey,
 	CommandKey,
+	CompassKey,
 	DaylightCycleKey,
 	DebugOverlayKey,
+	DebugShortcutKey,
 	FovKey,
 	FullscreenKey,
 	GameModeKey,
@@ -14,6 +16,7 @@ import {
 	PerspectiveKey,
 	RenderDistanceKey,
 	ScreenshotKey,
+	ServerKey,
 	SimulationDistanceKey,
 	StatusKey,
 	TimeKey,
@@ -33,6 +36,7 @@ for (const key of [
 	CinematicKey,
 	ScreenshotKey,
 	DebugOverlayKey,
+	DebugShortcutKey,
 	FovKey,
 	VolumeKey,
 	FullscreenKey,
@@ -43,7 +47,9 @@ for (const key of [
 	TimeKey,
 	DaylightCycleKey,
 	GameModeKey,
-	StatusKey
+	StatusKey,
+	CompassKey,
+	ServerKey
 ]) {
 	streamDeck.actions.registerAction(new key(game));
 }

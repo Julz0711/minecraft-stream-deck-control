@@ -124,6 +124,23 @@
 			"PropertyInspectorPath": "ui/none.html"
 		},
 		{
+			"Name": "Debug shortcut",
+			"UUID": "com.julz.minecraft-control.debug-shortcut",
+			"Icon": "imgs/actions/chunkBorders",
+			"Tooltip": "F3 shortcuts: chunk borders, hitboxes, advanced tooltips, reload chunks or resources, copy location.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/chunkBorders-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/debug.html"
+		},
+		{
 			"Name": "Field of view",
 			"UUID": "com.julz.minecraft-control.fov",
 			"Icon": "imgs/actions/fov",
@@ -309,6 +326,40 @@
 				}
 			],
 			"PropertyInspectorPath": "ui/status.html"
+		},
+		{
+			"Name": "Compass",
+			"UUID": "com.julz.minecraft-control.compass",
+			"Icon": "imgs/actions/compass",
+			"Tooltip": "Shows which way you're facing and the biome you're in.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/compass-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Server",
+			"UUID": "com.julz.minecraft-control.server",
+			"Icon": "imgs/actions/server",
+			"Tooltip": "Shows your ping, players online or the server name.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/server-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/server.html"
 		}
 	],
 	"Category": "Minecraft Control",

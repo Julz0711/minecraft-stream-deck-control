@@ -18,7 +18,7 @@ This repository has two parts:
 | Simulation distance + / − | Chunks | Singleplayer |
 | Perspective | 1st / 3rd / front | F5 |
 | Hide HUD | Hidden or shown | F1 |
-| Cinematic mode | On or off | Smooth camera, letterbox bars (2.39:1 by default), no HUD |
+| Cinematic mode | On or off | Smooth camera, letterbox bars that fade in (2.39:1 by default), no HUD |
 | Screenshot | Flashes on capture | F2 |
 | Debug screen | On or off | F3 |
 | Field of view + / − | FOV | |
@@ -32,6 +32,9 @@ This repository has two parts:
 | Daylight cycle | On or off | Admin |
 | Game mode | Current mode | Admin |
 | Status | FPS, coordinates or in-game time | Read-only |
+| Compass | Facing direction and biome | Read-only, the needle keeps pointing north |
+| Server | Ping, players online or server name | Read-only |
+| Debug shortcut | On or off | F3+G chunk borders, F3+B hitboxes, F3+H advanced tooltips, F3+A reload chunks, F3+T reload resource packs, F3+C copy location, F3+P pause when tabbed out |
 
 Admin keys need operator rights on a server, or cheats in singleplayer. Without them they show a lock and do nothing,
 instead of sending commands the server would reject.
