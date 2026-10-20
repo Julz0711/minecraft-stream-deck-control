@@ -1,0 +1,68 @@
+# Temporary: prints the Minecraft 26.3 API surface this mod uses. Removed before merge.
+name: API probe
+
+on:
+  push:
+    branches: [claude/project-thread-bs6tar]
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew help -q || true
+      - name: javap
+        run: |
+          JAR=$(find ~/.gradle/caches .gradle -name "minecraft-*.jar" -path "*26.3*" 2>/dev/null | grep -v sources | head -20)
+          echo "$JAR"
+          CP=$(echo "$JAR" | tr '\n' ':')
+          FAPI=$(find ~/.gradle/caches -name "fabric-*.jar" 2>/dev/null | grep -v sources | tr '\n' ':')
+          for c in \
+            net.minecraft.client.Minecraft \
+            net.minecraft.client.Options \
+            net.minecraft.client.CameraType \
+            net.minecraft.client.KeyMapping \
+            net.minecraft.client.Screenshot \
+            net.minecraft.client.KeyboardHandler \
+            net.minecraft.client.gui.Gui \
+            net.minecraft.client.gui.components.DebugScreenOverlay \
+            net.minecraft.client.gui.components.debug.DebugScreenEntryList \
+            net.minecraft.client.gui.components.toasts.SystemToast \
+            net.minecraft.client.gui.components.toasts.ToastManager \
+            net.minecraft.client.player.LocalPlayer \
+            net.minecraft.world.entity.player.Player \
+            net.minecraft.client.multiplayer.ClientPacketListener \
+            net.minecraft.client.multiplayer.ClientLevel \
+            'net.minecraft.client.multiplayer.ClientLevel$ClientLevelData' \
+            net.minecraft.client.multiplayer.MultiPlayerGameMode \
+            net.minecraft.world.level.Level \
+            net.minecraft.world.level.storage.LevelData \
+            net.minecraft.network.protocol.game.ClientboundSetTimePacket \
+            net.minecraft.world.level.gamerules.GameRules \
+            net.minecraft.world.level.GameRules \
+            net.minecraft.world.level.GameType \
+            net.minecraft.sounds.SoundSource \
+            com.mojang.blaze3d.platform.Window \
+            net.minecraft.client.gui.screens.ChatScreen \
+            net.minecraft.client.gui.screens.inventory.InventoryScreen \
+            net.minecraft.client.renderer.GameRenderer \
+            net.minecraft.server.permissions.Permissions \
+            net.minecraft.server.permissions.PermissionSet \
+            net.minecraft.world.clock.WorldClock \
+            ; do
+            echo "=================== $c"
+            javap -cp "$CP" -p "$c" 2>&1 | grep -v '^  private static final .*\$' | head -400
+          done
+          echo "=================== list clock/time/permission classes"
+          for j in $JAR; do unzip -l "$j" | grep -iE "clock|permission|GameRule|debug/DebugScreen" | awk '{print $4}' | head -80; done
+          echo "=================== fabric hud"
+          for j in $(find ~/.gradle/caches -name "fabric-rendering-v1*.jar" | grep -v sources | head -1); do unzip -l $j | grep -i hud; done
+          javap -cp "$CP:$FAPI" -p net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry 2>&1 | head -80
