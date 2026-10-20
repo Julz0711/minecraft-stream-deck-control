@@ -1,0 +1,321 @@
+{
+	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+	"Name": "Minecraft Control",
+	"Version": "1.0.0.0",
+	"Author": "Julz",
+	"Actions": [
+		{
+			"Name": "Render distance",
+			"UUID": "com.julz.minecraft-control.render-distance",
+			"Icon": "imgs/actions/renderDistance",
+			"Tooltip": "Raises or lowers the render distance; shows the current chunks.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/renderDistance-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/step.html"
+		},
+		{
+			"Name": "Simulation distance",
+			"UUID": "com.julz.minecraft-control.simulation-distance",
+			"Icon": "imgs/actions/simulationDistance",
+			"Tooltip": "Raises or lowers the simulation distance (singleplayer).",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/simulationDistance-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/step.html"
+		},
+		{
+			"Name": "Perspective",
+			"UUID": "com.julz.minecraft-control.perspective",
+			"Icon": "imgs/actions/perspective",
+			"Tooltip": "Cycles first person, third person and front view (F5).",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/perspective-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Hide HUD",
+			"UUID": "com.julz.minecraft-control.hide-hud",
+			"Icon": "imgs/actions/hud",
+			"Tooltip": "Hides or shows the HUD (F1).",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/hud-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Cinematic mode",
+			"UUID": "com.julz.minecraft-control.cinematic",
+			"Icon": "imgs/actions/cinematic",
+			"Tooltip": "Smooth camera with letterbox bars and no HUD.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/cinematic-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Screenshot",
+			"UUID": "com.julz.minecraft-control.screenshot",
+			"Icon": "imgs/actions/screenshot",
+			"Tooltip": "Takes a screenshot (F2).",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/screenshot-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Debug screen",
+			"UUID": "com.julz.minecraft-control.debug-overlay",
+			"Icon": "imgs/actions/debug",
+			"Tooltip": "Shows or hides the debug screen (F3).",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/debug-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Field of view",
+			"UUID": "com.julz.minecraft-control.fov",
+			"Icon": "imgs/actions/fov",
+			"Tooltip": "Raises or lowers the field of view; shows the current FOV.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/fov-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/step.html"
+		},
+		{
+			"Name": "Volume",
+			"UUID": "com.julz.minecraft-control.volume",
+			"Icon": "imgs/actions/volume",
+			"Tooltip": "Master volume up, down or mute; shows the current volume.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/volume-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/volume.html"
+		},
+		{
+			"Name": "Fullscreen",
+			"UUID": "com.julz.minecraft-control.fullscreen",
+			"Icon": "imgs/actions/fullscreen",
+			"Tooltip": "Switches fullscreen on or off (F11).",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/fullscreen-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Open menu",
+			"UUID": "com.julz.minecraft-control.open-screen",
+			"Icon": "imgs/actions/pause",
+			"Tooltip": "Opens the pause menu, chat or inventory.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/pause-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/screen.html"
+		},
+		{
+			"Name": "Chat command",
+			"UUID": "com.julz.minecraft-control.command",
+			"Icon": "imgs/actions/command",
+			"Tooltip": "Runs a command you set. Turn on chat command keys in the mod settings first.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/command-key",
+					"ShowTitle": true,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/command.html"
+		},
+		{
+			"Name": "Set weather",
+			"UUID": "com.julz.minecraft-control.weather",
+			"Icon": "imgs/actions/clear",
+			"Tooltip": "Sets clear weather, rain or thunder. Needs operator rights or cheats.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/clear-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/weather.html"
+		},
+		{
+			"Name": "Set time",
+			"UUID": "com.julz.minecraft-control.time",
+			"Icon": "imgs/actions/day",
+			"Tooltip": "Sets the time to day, noon, night or midnight. Needs operator rights or cheats.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/day-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/time.html"
+		},
+		{
+			"Name": "Daylight cycle",
+			"UUID": "com.julz.minecraft-control.daylight-cycle",
+			"Icon": "imgs/actions/cycle",
+			"Tooltip": "Stops or starts the day and night cycle. Needs operator rights or cheats.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/cycle-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/none.html"
+		},
+		{
+			"Name": "Game mode",
+			"UUID": "com.julz.minecraft-control.game-mode",
+			"Icon": "imgs/actions/gameMode",
+			"Tooltip": "Cycles survival, creative and spectator, or sets one. Needs operator rights or cheats.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/gameMode-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/gamemode.html"
+		},
+		{
+			"Name": "Status",
+			"UUID": "com.julz.minecraft-control.status",
+			"Icon": "imgs/actions/fps",
+			"Tooltip": "Shows FPS, coordinates or the in-game time. Read-only.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/fps-key",
+					"ShowTitle": false,
+					"TitleAlignment": "top"
+				}
+			],
+			"PropertyInspectorPath": "ui/status.html"
+		}
+	],
+	"Category": "Minecraft Control",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"Description": "Control Minecraft from your Stream Deck: render distance, perspective, HUD, cinematic mode, screenshots, admin keys and live FPS, coordinates and time on your keys. Needs the free Stream Deck Control mod for Minecraft (Fabric).",
+	"Icon": "imgs/plugin/marketplace",
+	"SDKVersion": 3,
+	"Software": {
+		"MinimumVersion": "7.1"
+	},
+	"OS": [
+		{
+			"Platform": "mac",
+			"MinimumVersion": "12"
+		},
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "24"
+	},
+	"UUID": "com.julz.minecraft-control",
+	"URL": "https://github.com/Julz0711/minecraft-stream-deck-control"
+}

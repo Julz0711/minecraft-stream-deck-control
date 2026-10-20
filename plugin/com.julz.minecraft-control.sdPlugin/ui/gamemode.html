@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Minecraft Control</title>
+		<link rel="stylesheet" href="pi.css" />
+	</head>
+	<body>
+		<div class="item">
+			<label for="mode">Game mode</label>
+			<select id="mode" data-setting="mode" data-default="cycle">
+				<option value="cycle">Cycle survival, creative, spectator</option>
+				<option value="survival">Survival</option>
+				<option value="creative">Creative</option>
+				<option value="adventure">Adventure</option>
+				<option value="spectator">Spectator</option>
+			</select>
+		</div>
+		<p class="hint">Needs operator rights on a server, or cheats on in singleplayer. Otherwise the key shows a lock.</p>
+		<script src="pi.js"></script>
+	</body>
+</html>

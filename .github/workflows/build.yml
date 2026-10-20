@@ -68,8 +68,8 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run icons -- --check
-      - run: npm run validate
       - run: npm run pack
+      - run: npm run validate
       - uses: actions/upload-artifact@v4
         with:
           name: stream-deck-plugin
