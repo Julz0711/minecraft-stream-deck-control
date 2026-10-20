@@ -109,6 +109,15 @@ public class ApiServer {
         return (int) server.getConnections().stream().filter(ApiServer::isPaired).count();
     }
 
+    /** Closes all connections, e.g. after the pairing code changed. Clients then have to pair again. */
+    public synchronized void disconnectAll() {
+        if (server != null) {
+            for (WebSocket conn : server.getConnections()) {
+                conn.close(CLOSE_PAIRING_REQUIRED, "Pairing code changed");
+            }
+        }
+    }
+
     /** Sends the keys that changed since the last snapshot to every paired client. */
     public void publishState(JsonObject snapshot) {
         JsonObject changes = state.update(snapshot);

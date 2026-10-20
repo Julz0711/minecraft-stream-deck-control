@@ -1,0 +1,19 @@
+{
+	"toast.stream-deck-control.pairing.title": "%s wants to control Minecraft",
+	"toast.stream-deck-control.pairing.code": "Pairing code: %s",
+	"stream-deck-control.config.title": "Stream Deck Control",
+	"stream-deck-control.config.pairingCode": "Pairing code",
+	"stream-deck-control.config.pairingCode.tooltip": "Enter this code in the Stream Deck app (any Minecraft key's settings). Click for a new code; every paired Stream Deck then has to pair again.",
+	"stream-deck-control.config.allowCommands": "Chat command keys",
+	"stream-deck-control.config.allowCommands.tooltip": "Lets the \"Chat command\" key run any command you set on it. Off by default.",
+	"stream-deck-control.config.showPairingToasts": "Pairing popups",
+	"stream-deck-control.config.showPairingToasts.tooltip": "Shows the pairing code when a Stream Deck that isn't paired yet tries to connect.",
+	"stream-deck-control.config.cinematic": "Cinematic mode",
+	"stream-deck-control.config.letterboxRatio": "Letterbox",
+	"stream-deck-control.config.letterboxRatio.tooltip": "Picture shape between the black bars. 2.39:1 is the classic widescreen look; 1.85:1 is subtler.",
+	"stream-deck-control.config.letterboxRatio.off": "Off",
+	"stream-deck-control.config.cinematicHidesHud": "Hide HUD",
+	"stream-deck-control.config.cinematicHidesHud.tooltip": "Cinematic mode also hides the HUD and your hand, like F1.",
+	"stream-deck-control.config.status": "Listening on 127.0.0.1:%s, %s Stream Deck(s) connected",
+	"stream-deck-control.config.status.off": "The local API is not running, see the log"
+}
