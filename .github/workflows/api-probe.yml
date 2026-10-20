@@ -25,43 +25,41 @@ jobs:
           echo "$JAR"
           CP=$(echo "$JAR" | tr '\n' ':')
           FAPI=$(find ~/.gradle/caches -name "fabric-*.jar" 2>/dev/null | grep -v sources | tr '\n' ':')
+          F='sed -E s/net\.minecraft\.//g;s/java\.lang\.//g;s/java\.util\.//g'
+          for c in client.Options com.mojang.blaze3d.platform.Window; do
+            echo "=================== $c (public methods)"
+            javap -cp "$CP" "$c" | grep '(' | $F
+          done
           for c in \
-            net.minecraft.client.Minecraft \
-            net.minecraft.client.Options \
-            net.minecraft.client.CameraType \
-            net.minecraft.client.KeyMapping \
-            net.minecraft.client.Screenshot \
-            net.minecraft.client.KeyboardHandler \
-            net.minecraft.client.gui.Gui \
-            net.minecraft.client.gui.components.DebugScreenOverlay \
-            net.minecraft.client.gui.components.debug.DebugScreenEntryList \
-            net.minecraft.client.gui.components.toasts.SystemToast \
-            net.minecraft.client.gui.components.toasts.ToastManager \
-            net.minecraft.client.player.LocalPlayer \
-            net.minecraft.world.entity.player.Player \
-            net.minecraft.client.multiplayer.ClientPacketListener \
-            net.minecraft.client.multiplayer.ClientLevel \
-            'net.minecraft.client.multiplayer.ClientLevel$ClientLevelData' \
-            net.minecraft.client.multiplayer.MultiPlayerGameMode \
-            net.minecraft.world.level.Level \
-            net.minecraft.world.level.storage.LevelData \
-            net.minecraft.network.protocol.game.ClientboundSetTimePacket \
-            net.minecraft.world.level.gamerules.GameRules \
-            net.minecraft.world.level.GameRules \
-            net.minecraft.world.level.GameType \
-            net.minecraft.sounds.SoundSource \
-            com.mojang.blaze3d.platform.Window \
-            net.minecraft.client.gui.screens.ChatScreen \
-            net.minecraft.client.gui.screens.inventory.InventoryScreen \
-            net.minecraft.client.renderer.GameRenderer \
-            net.minecraft.server.permissions.Permissions \
-            net.minecraft.server.permissions.PermissionSet \
-            net.minecraft.world.clock.WorldClock \
-            net.minecraft.client.OptionInstance \
-            net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl \
+            client.gui.Hud \
+            'client.gui.components.ChatComponent$ChatMethod' \
+            client.ClientClockManager \
+            world.clock.ClockNetworkState \
+            world.clock.ClockManager \
+            world.clock.ClockState \
+            world.clock.ClockInstance \
+            world.clock.WorldClocks \
+            world.clock.ClockTimeMarkers \
+            network.protocol.game.ClientboundGameRuleValuesPacket \
+            network.protocol.game.ServerboundSetGameRulePacket \
+            client.gui.screens.options.HasGamemasterPermissionReaction \
+            client.gui.screens.options.InWorldGameRulesScreen \
+            server.permissions.LevelBasedPermissionSet \
+            server.permissions.PermissionLevel \
+            world.level.GameType \
+            client.sounds.SoundManager \
+            client.gui.components.toasts.SystemToast\$SystemToastId \
             ; do
             echo "=================== $c"
-            javap -cp "$CP" -p "$c" 2>&1 | grep -vE 'lambda\$|access\$|^  private static final (org.slf4j|int|long|float|double|java.lang.String|net.minecraft.resources.Identifier) ' | sed -E 's/net\.minecraft\.//g; s/java\.lang\.//g; s/java\.util\.//g' | head -300
+            javap -cp "$CP" -p "net.minecraft.$c" 2>&1 | grep -vE 'lambda\$|access\$' | $F | head -150
           done
-          echo "=================== list clock/time/permission classes"
-          for j in $(echo "$JAR" | head -1); do unzip -l "$j" | awk '{print $4}' | grep -E '\.class$' | grep -iE "clock|permission|gamerule|debug/DebugScreen|toast" | grep -v '\$' | head -80; done
+          dis() { javap -cp "$CP" -c -p "net.minecraft.$1" | awk -v m="$2" 'index($0, m"(") && /\(/ {p=1} p {print} p && /^$/ {exit}' | grep -E 'invoke|getstatic|getfield|putfield|ldc|^  [a-z]' | $F | head -${3:-120}; }
+          echo "=================== Minecraft.handleGlobalKeyPress"; dis client.Minecraft handleGlobalKeyPress 200
+          echo "=================== Minecraft.toggleFullscreen"; dis client.Minecraft toggleFullscreen
+          echo "=================== Gui.handleKeybinds"; dis client.gui.Gui handleKeybinds 250
+          echo "=================== Gui.setPauseScreen"; dis client.gui.Gui setPauseScreen
+          echo "=================== ClientLevel.setTimeFromServer"; dis client.multiplayer.ClientLevel setTimeFromServer
+          echo "=================== Level.getDefaultClockTime"; dis world.level.Level getDefaultClockTime
+          echo "=================== ClientPacketListener.handleSetTime"; dis client.multiplayer.ClientPacketListener handleSetTime
+          echo "=================== ClientPacketListener.handleGameRuleValues"; dis client.multiplayer.ClientPacketListener handleGameRuleValues
+          echo "=================== Options.fov"; javap -cp "$CP" -c -p net.minecraft.client.Options | grep -E 'ldc.*"(options\.fov|soundCategory|fullscreen)' | head
