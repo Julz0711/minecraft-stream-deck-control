@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Minecraft Control</title>
+		<link rel="stylesheet" href="pi.css" />
+	</head>
+	<body>
+		<div class="item">
+			<label for="key">Combo</label>
+			<select id="key" data-setting="key" data-default="hitboxes">
+				<option value="hitboxes">F3+B · Show hitboxes</option>
+				<option value="chunk_borders">F3+G · Show chunk borders</option>
+				<option value="advanced_tooltips">F3+H · Advanced tooltips (durability, item IDs)</option>
+				<option value="creative_spectator">F3+N · Creative ↔ spectator</option>
+				<option value="reload_resources">F3+T · Reload resource packs</option>
+				<option value="reload_chunks">F3+A · Reload chunks</option>
+				<option value="copy_location">F3+C · Copy location</option>
+				<option value="clear_chat">F3+D · Clear chat</option>
+				<option value="pause_without_menu">F3+Esc · Pause without menu</option>
+				<option value="pause_on_lost_focus">F3+P · Pause when tabbed out</option>
+			</select>
+		</div>
+		<p class="hint">Some servers hide debug info; then hitboxes, chunk borders and copy location are locked, like in vanilla. F3+N needs operator rights or cheats.</p>
+		<script src="pi.js"></script>
+	</body>
+</html>

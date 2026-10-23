@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Minecraft Control</title>
+		<link rel="stylesheet" href="pi.css" />
+	</head>
+	<body>
+		<div class="item">
+			<label for="direction">Direction</label>
+			<select id="direction" data-setting="direction" data-default="up">
+				<option value="up">Up (+)</option>
+				<option value="down">Down (−)</option>
+			</select>
+		</div>
+		<div class="item">
+			<label for="step">Step</label>
+			<input type="number" id="step" data-setting="step" min="1" max="20" placeholder="Default" />
+		</div>
+		<p class="hint">Render and simulation distance step 1 chunk by default, field of view 5 degrees.</p>
+		<script src="pi.js"></script>
+	</body>
+</html>

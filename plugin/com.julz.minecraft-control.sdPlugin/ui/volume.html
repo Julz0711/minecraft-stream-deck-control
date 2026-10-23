@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Minecraft Control</title>
+		<link rel="stylesheet" href="pi.css" />
+	</head>
+	<body>
+		<div class="item">
+			<label for="source">Sound</label>
+			<select id="source" data-setting="source" data-default="master">
+				<option value="master">Master volume</option>
+				<option value="music">Music</option>
+				<option value="record">Jukebox / note blocks</option>
+				<option value="weather">Weather</option>
+				<option value="block">Blocks</option>
+				<option value="hostile">Hostile creatures</option>
+				<option value="neutral">Friendly creatures</option>
+				<option value="player">Players</option>
+				<option value="ambient">Ambient / environment</option>
+				<option value="voice">Voice / speech</option>
+			</select>
+		</div>
+		<div class="item">
+			<label for="mode">Press</label>
+			<select id="mode" data-setting="mode" data-default="up">
+				<option value="up">Volume up</option>
+				<option value="down">Volume down</option>
+				<option value="mute">Mute / unmute</option>
+			</select>
+		</div>
+		<div class="item">
+			<label for="step">Step (%)</label>
+			<input type="number" id="step" data-setting="step" min="1" max="50" placeholder="10" />
+		</div>
+		<script src="pi.js"></script>
+	</body>
+</html>

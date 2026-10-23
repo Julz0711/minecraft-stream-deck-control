@@ -1,0 +1,36 @@
+{
+	"name": "minecraft-stream-deck-control-plugin",
+	"private": true,
+	"description": "Stream Deck plugin for the Stream Deck Control Minecraft mod",
+	"type": "module",
+	"scripts": {
+		"build": "rollup -c",
+		"watch": "rollup -c -w --watch.onEnd=\"streamdeck restart com.julz.minecraft-control\"",
+		"icons": "tsx scripts/make-icons.ts",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"validate": "streamdeck validate com.julz.minecraft-control.sdPlugin",
+		"pack": "npm run build && streamdeck pack com.julz.minecraft-control.sdPlugin --output dist --force"
+	},
+	"devDependencies": {
+		"@elgato/cli": "1.10.3",
+		"@resvg/resvg-js": "2.6.2",
+		"@rollup/plugin-commonjs": "^29.0.2",
+		"@rollup/plugin-node-resolve": "^15.2.2",
+		"@rollup/plugin-terser": "^1.0.0",
+		"@rollup/plugin-typescript": "^12.1.0",
+		"@tsconfig/node20": "^20.1.2",
+		"@types/node": "~24.1.0",
+		"@types/ws": "^8.18.1",
+		"rollup": "^4.0.2",
+		"tslib": "^2.6.2",
+		"tsx": "^4.23.15",
+		"typescript": "^5.2.2",
+		"vitest": "^3.2.4"
+	},
+	"dependencies": {
+		"@elgato/streamdeck": "3.0.3",
+		"@elgato/utils": "0.6.1",
+		"ws": "^8.19.0"
+	}
+}

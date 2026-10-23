@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "stream-deck-control",
+	"version": "${version}",
+	"name": "Stream Deck Control",
+	"description": "Control Minecraft from an Elgato Stream Deck: toggles, admin keys and live stats on your keys, through a local API that only listens on your own PC.",
+	"authors": [
+		"Julz"
+	],
+	"contact": {
+		"sources": "https://github.com/Julz0711/minecraft-stream-deck-control",
+		"issues": "https://github.com/Julz0711/minecraft-stream-deck-control/issues"
+	},
+	"license": "CC0-1.0",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.julz.streamdeckcontrol.client.StreamDeckControlClient"
+		],
+		"modmenu": [
+			"com.julz.streamdeckcontrol.compat.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"stream-deck-control.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
+	}
+}

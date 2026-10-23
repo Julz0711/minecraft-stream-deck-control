@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"id": "stream-deck-control-test",
+	"version": "1.0.0",
+	"name": "Stream Deck Control Tests",
+	"environment": "client",
+	"entrypoints": {
+		"fabric-client-gametest": [
+			"com.julz.streamdeckcontrol.test.StreamDeckControlClientGameTest"
+		]
+	},
+	"depends": {
+		"stream-deck-control": "*"
+	}
+}

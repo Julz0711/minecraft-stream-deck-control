@@ -1,0 +1,16 @@
+.gradle
+build/
+run/
+bin/
+.vscode/
+.idea/
+*.ipr
+*.iws
+*.iml
+out/
+
+# Stream Deck plugin
+node_modules/
+*.sdPlugin/bin
+*.sdPlugin/logs
+*.streamDeckPlugin

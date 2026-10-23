@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Minecraft Control</title>
+		<link rel="stylesheet" href="pi.css" />
+	</head>
+	<body>
+		<div class="item">
+			<label for="time">Time</label>
+			<select id="time" data-setting="time" data-default="day">
+				<option value="day">Day (07:00)</option>
+				<option value="noon">Noon (12:00)</option>
+				<option value="night">Night (19:00)</option>
+				<option value="midnight">Midnight (00:00)</option>
+			</select>
+		</div>
+		<p class="hint">Needs operator rights on a server, or cheats on in singleplayer. Otherwise the key shows a lock.</p>
+		<script src="pi.js"></script>
+	</body>
+</html>
