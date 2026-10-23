@@ -1,0 +1,32 @@
+# Temporary: prints the Minecraft 26.3 API surface this mod uses. Removed before merge.
+name: API probe
+
+on:
+  push:
+    branches: [claude/project-thread-bs6tar]
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew help -q || true
+      - name: javap
+        run: |
+          JAR=$(find ~/.gradle/caches .gradle -name "minecraft-*.jar" -path "*26.3*" 2>/dev/null | grep -v sources | head -20)
+          JAR=$(find ~/.gradle/caches .gradle -name "minecraft-*.jar" -path "*26.3*" 2>/dev/null | grep -v sources | head -20)
+          CP=$(echo "$JAR" | tr '\n' ':')
+          F='sed -E s/net\.minecraft\.//g;s/java\.lang\.//g;s/java\.util\.//g'
+          for c in client.gui.components.ChatComponent client.multiplayer.chat.GuiMessageSource client.GuiMessageTag client.GuiMessageSource; do
+            echo "=================== $c"; javap -cp "$CP" "net.minecraft.$c" 2>&1 | grep -v lambda | $F | head -80
+          done
+          echo "=================== messageish"; javap -cp "$CP" net.minecraft.client.player.LocalPlayer net.minecraft.world.entity.player.Player net.minecraft.client.gui.Gui net.minecraft.client.gui.Hud 2>&1 | grep -iE 'message|chat|^[a-z].*class' | $F
+          echo "=================== GuiMessageSource find"; unzip -l $(echo "$JAR" | head -1) | grep -iE 'GuiMessage' 
