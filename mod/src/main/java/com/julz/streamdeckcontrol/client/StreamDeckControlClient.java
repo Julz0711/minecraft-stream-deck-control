@@ -111,7 +111,7 @@ public class StreamDeckControlClient implements ClientModInitializer {
                     .withColor(ChatFormatting.GREEN)
                     .withClickEvent(new ClickEvent.CopyToClipboard(code))
                     .withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.stream-deck-control.pairing.hover"))));
-            client.gui.hud.getChat().addMessage(Component.translatable("chat.stream-deck-control.pairing", clientName, clickable));
+            client.gui.hud.getChat().addClientSystemMessage(Component.translatable("chat.stream-deck-control.pairing", clientName, clickable));
         }
     }
 
