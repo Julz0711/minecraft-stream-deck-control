@@ -10,7 +10,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.HoverEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +28,7 @@ public class StreamDeckControlClient implements ClientModInitializer {
 
     private static final long PAIRING_TOAST_INTERVAL_MS = 15_000;
     private static final SystemToast.SystemToastId PAIRING_TOAST = new SystemToast.SystemToastId(10_000L);
+    private static final SystemToast.SystemToastId COPIED_TOAST = new SystemToast.SystemToastId(3_000L);
 
     private static ApiServer server;
     private static GameActions actions;
@@ -78,6 +83,14 @@ public class StreamDeckControlClient implements ClientModInitializer {
         }
     }
 
+    /** Puts the pairing code on the clipboard and confirms with a toast. */
+    public static void copyPairingCode(Minecraft client) {
+        client.keyboardHandler.setClipboard(ModConfig.getInstance().pairingCode);
+        SystemToast.addOrUpdate(client.gui.toastManager(), COPIED_TOAST,
+                Component.translatable("toast.stream-deck-control.copied.title"),
+                Component.translatable("toast.stream-deck-control.copied.code"));
+    }
+
     private static void showPairingToast(Minecraft client, String clientName) {
         if (!ModConfig.getInstance().showPairingToasts) {
             return;
@@ -91,6 +104,15 @@ public class StreamDeckControlClient implements ClientModInitializer {
         SystemToast.addOrUpdate(client.gui.toastManager(), PAIRING_TOAST,
                 Component.translatable("toast.stream-deck-control.pairing.title", clientName),
                 Component.translatable("toast.stream-deck-control.pairing.code", ModConfig.getInstance().pairingCode));
+        // In a world the code also goes to chat, where clicking it copies it.
+        if (client.player != null) {
+            String code = ModConfig.getInstance().pairingCode;
+            Component clickable = ComponentUtils.wrapInSquareBrackets(Component.literal(code)).withStyle(style -> style
+                    .withColor(ChatFormatting.GREEN)
+                    .withClickEvent(new ClickEvent.CopyToClipboard(code))
+                    .withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.stream-deck-control.pairing.hover"))));
+            client.gui.hud.getChat().addMessage(Component.translatable("chat.stream-deck-control.pairing", clientName, clickable));
+        }
     }
 
     private static String version(String modId) {

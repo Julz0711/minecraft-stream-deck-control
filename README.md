@@ -47,8 +47,10 @@ instead of sending commands the server would reject.
 2. Install the plugin: double-click `com.julz.minecraft-control.streamDeckPlugin` (Stream Deck 7.1 or newer,
    Windows 10+ or macOS 12+).
 3. Start Minecraft and drag a Minecraft Control key onto your Stream Deck. The key says **PAIR** and Minecraft shows
-   a toast with a pairing code such as `K7QM-2XPA`.
-4. Click the key in the Stream Deck app and enter the code under **Connection**. Done; the code is remembered.
+   a toast with a pairing code such as `K7QM-2XPA`. In a world the code is also posted in chat; click it to copy it.
+   From the title screen, open the mod's settings (Mod Menu) and click the code to copy it.
+4. Click the key in the Stream Deck app and paste or type the code under **Connection**. Done; the code is
+   remembered.
 
 The plugin finds the game on its own (ports 25570 to 25579). With several Minecraft instances running, it connects to
 the first one; set a fixed port in the key settings to pick another.

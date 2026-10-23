@@ -19,6 +19,7 @@ public class StreamDeckControlConfigScreen extends OptionsSubScreen {
 
     private final Screen parent;
     private final OptionInstance<Boolean> pairingCode;
+    private final OptionInstance<Boolean> newPairingCode;
     private final OptionInstance<Boolean> allowCommands;
     private final OptionInstance<Boolean> showPairingToasts;
     private final OptionInstance<Boolean> cinematicHidesHud;
@@ -29,11 +30,18 @@ public class StreamDeckControlConfigScreen extends OptionsSubScreen {
         this.parent = parent;
         ModConfig config = ModConfig.getInstance();
 
-        // Shows the code; clicking it makes a new one, which unpairs every Stream Deck.
+        // Shows the code; clicking it copies it, so it can be pasted into the Stream Deck app.
         this.pairingCode = OptionInstance.createBoolean(
                 PREFIX + "pairingCode",
                 OptionInstance.cachedConstantTooltip(Component.translatable(PREFIX + "pairingCode.tooltip")),
-                (caption, value) -> Component.literal(ModConfig.getInstance().pairingCode),
+                (caption, value) -> Component.translatable(PREFIX + "pairingCode.copy", ModConfig.getInstance().pairingCode),
+                false,
+                value -> StreamDeckControlClient.copyPairingCode(Minecraft.getInstance()));
+        // Makes a new code, which unpairs every Stream Deck.
+        this.newPairingCode = OptionInstance.createBoolean(
+                PREFIX + "newPairingCode",
+                OptionInstance.cachedConstantTooltip(Component.translatable(PREFIX + "newPairingCode.tooltip")),
+                (caption, value) -> caption,
                 false,
                 value -> {
                     StreamDeckControlClient.newPairingCode();
@@ -58,7 +66,7 @@ public class StreamDeckControlConfigScreen extends OptionsSubScreen {
 
     @Override
     protected void addOptions() {
-        this.list.addBig(this.pairingCode);
+        this.list.addSmall(this.pairingCode, this.newPairingCode);
         this.list.addSmall(this.allowCommands, this.showPairingToasts);
         this.list.addHeader(Component.translatable(PREFIX + "cinematic"));
         this.list.addBig(this.letterboxRatio);
